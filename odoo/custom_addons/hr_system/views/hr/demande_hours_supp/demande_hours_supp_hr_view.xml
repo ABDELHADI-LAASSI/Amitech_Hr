@@ -1,0 +1,117 @@
+<odoo>
+    <!-- Kanban View for Hr -->
+    <record id="view_demande_heures_sup_kanban_hr" model="ir.ui.view">
+        <field name="name">demande.heures.sup.kanban.hr</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px"> 
+                                <span style="font-weight: bold;"><field name="type_heures_sup_id" /></span>
+                                <span style="font-weight: bold;"><field name="nombre_heures" /> heures</span>
+                            </div>
+                            <div>
+                                <p>Heure supplémentaire demandée pour le <field style="font-weight: bold;" name="date" /></p>
+                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/> </p>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
+                                <field name="state" widget="badge" decoration-danger="state == 'refused'" decoration-success="state == 'done'" decoration-muted="state == 'manager_approval'" />
+                                <div class="btns">
+                                    <t t-if="record.state.raw_value == 'manager_approval' or record.state.raw_value == 'refused' ">
+                                        <button name="approved_by_hr" type="object" class="accept_button" >
+                                            <i class="fa fa-thumbs-up"/> Accepter
+                                        </button>
+                                    </t>
+                                    <t t-if="record.state.raw_value == 'done' or record.state.raw_value == 'manager_approval' ">
+                                        <button name="refused_by_hr" type="object" class="reject_button">
+                                            <i class="fa fa-times"/> Refuser
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+
+    <!-- Calendar View for Hr -->
+    <record id="view_demande_heures_sup_calendar_hr" model="ir.ui.view">
+        <field name="name">demande.heures.sup.calendar.hr</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <calendar string="Demande d'Heures Supplémentaires" date_start="date" color="state" mode="week" quick_create="0">
+                <field name="user_id"/>
+                <field name="type_heures_sup_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Tree View for Hr -->
+    <record id="view_demande_heures_sup_tree_hr" model="ir.ui.view">
+        <field name="name">demande.heures.sup.tree.hr</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="user_id" />
+                <field name="date" />
+                <field name="type_heures_sup_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View for Hr -->
+    <record id="view_demande_heures_sup_form_hr" model="ir.ui.view">
+        <field name="name">demande.heures.sup.form.hr</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <form>
+                <header >
+                    <field name="state" widget="statusbar" readonly="1"/>
+                    <button name="approved_by_hr" string="Accepter" type="object" class="accept_button" invisible="state not in ('refused', 'manager_approval')" />
+                    <button name="refused_by_hr" string="Refuser" type="object" class="reject_button" invisible="state not in ('done', 'manager_approval')" />
+                </header>
+                <sheet>
+                    
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1" />
+                            <field name="date" readonly="1"/>
+                            <field name="nombre_heures" readonly="1"/>
+                            <field name="type_heures_sup_id" readonly="1"/>
+                            <field name="commentaires" widget="text" readonly="1"/>
+                            <field name="message_refused_manager" widget="text" invisible="state not in ('refused')"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Hr -->
+    <record id="view_demande_heures_sup_action_hr" model="ir.actions.act_window">
+        <field name="name">Demandes d'Heures Supplémentaires Hr</field>
+        <field name="res_model">demande.heures.sup</field>
+        <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_demande_heures_sup_kanban_hr')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_demande_heures_sup_calendar_hr')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_demande_heures_sup_tree_hr')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_demande_heures_sup_form_hr')})]"/>
+        <field name="domain">[('state', 'in', ['done', 'manager_approval', 'refused'])]</field>
+        <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_hr')])]"/>
+    </record>
+
+    <!-- Menu for Hr -->
+    <menuitem id="menu_demande_heures_sup_hr"
+        name="Demandes d'Heures Supplémentaires (Hr)"
+        parent="demande_hours_supp_root"
+        action="view_demande_heures_sup_action_hr"
+        groups="hr_system.group_demande_sortie_hr"
+        sequence="20"/>
+</odoo>

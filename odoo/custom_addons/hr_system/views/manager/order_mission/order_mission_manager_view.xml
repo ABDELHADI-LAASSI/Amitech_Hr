@@ -1,0 +1,128 @@
+<odoo>
+    <!-- Kanban View -->
+    <record id="view_ordre_mission_kanban_manager" model="ir.ui.view">
+        <field name="name">ordre.mission.kanban.manager</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
+                                <span style="font-weight: bold;"><field name="type_mission_id" /></span>
+                                <span style="font-weight: bold;"><field name="montant" /> MAD</span>
+                            </div>
+                            <div>
+                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/> le <field style="font-weight: bold;" name="date"/></p>
+                                <p>Mission de : <field style="font-weight: bold;" name="name"/></p>
+                                
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
+                                <field name="state" widget="badge" decoration-danger="state == 'manager_reject'" decoration-success="state == 'manager_approval'" decoration-muted="state == 'pending'" />
+    
+                                <!-- Accept button is visible if state is 'manager_reject' or 'pending' -->
+                                
+                                <div class="btns">
+                                    <t t-if="record.state.raw_value == 'pending' or record.state.raw_value == 'manager_reject' ">
+                                        <button name="approved_by_manager" type="object" class="accept_button" >
+                                            <i class="fa fa-thumbs-up"/> Accepter
+                                        </button>
+                                    </t>
+        
+                                    <!-- Reject button is visible if state is 'manager_approval' or 'pending' -->
+                                    <t t-if="record.state.raw_value == 'pending' or record.state.raw_value == 'manager_approval' ">
+                                        <button name="refused_by_manager" type="object" class="reject_button">
+                                            <i class="fa fa-times"/> Refuser
+                                        </button>
+                                    </t>
+                                </div>
+
+                                <!-- <t t-if="record.state.raw_value == 'pending' ">
+                                    <button name="action_manager_reject" type="object" string="Refuse" class="btn-danger" />
+                                </t> -->
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_ordre_mission_calendar_manager" model="ir.ui.view">
+        <field name="name">ordre.mission.calendar.manager</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <calendar string="Ordres de Mission" date_start="date" color="state" mode="month" quick_create="0">
+                <field name="user_id"/>
+                <field name="type_mission_id"/>
+                <field name="montant"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_ordre_mission_tree_manager" model="ir.ui.view">
+        <field name="name">ordre.mission.tree.manager</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="user_id" />
+                <field name="date" />
+                <field name="type_mission_id" />
+                <field name="montant" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_ordre_mission_form_manager" model="ir.ui.view">
+        <field name="name">ordre.mission.form.manager</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" readonly="1"/>
+                    <button name="approved_by_manager" type="object" string="Accepter" class="accept_button" invisible="state not in ('manager_reject', 'pending')"/>
+                    <button name="refused_by_manager" type="object" string="Refuser" class="reject_button" invisible="state not in ('manager_approval', 'pending')"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1" />
+                            <field name="user_id" readonly="1" />
+                            <field name="date" readonly="1" />
+                            <field name="type_mission_id" readonly="1" />
+                            <field name="montant" readonly="1" />
+                            <field name="mission_description" widget="text" readonly="1" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="view_ordre_mission_action_manager" model="ir.actions.act_window">
+        <field name="name">Ordres de Mission Manager</field>
+        <field name="res_model">ordre.mission</field>
+        <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_ordre_mission_kanban_manager')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_ordre_mission_calendar_manager')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ordre_mission_tree_manager')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_ordre_mission_form_manager')})]"/>
+            <field name="domain">[('state', 'in', ['pending', 'manager_approval', 'manager_reject'])]</field>
+        <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_manager')])]"/>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ordre_mission_manager"
+        name="Ordres de Mission Manager"
+        parent="order_mission"
+        action="view_ordre_mission_action_manager"
+        groups="hr_system.group_demande_sortie_manager"
+        sequence="50"/>
+</odoo>

@@ -1,0 +1,27 @@
+<odoo>
+    <!--  Root Menu  -->
+    <menuitem id="hr_system_root" name="AMITECH HR"/>
+    <!--  Submenu  -->
+
+
+    <menuitem id="conge" name="Demande de Congé" parent="hr_system_root"/>
+
+    <menuitem id="demande_sortie_root" name="Demande de Sortie" parent="hr_system_root" />
+
+    <menuitem id="declaration_retard_root" name="Declaration de Retard" parent="hr_system_root" />
+
+    <menuitem id="demande_hours_supp_root" name="Demande d'heures supplémentaires" parent="hr_system_root" />
+
+    <menuitem id="demande_note_frais" name="Demande de notes de frais" parent="hr_system_root" />
+
+    <menuitem id="order_mission" name="Ordre de Mission" parent="hr_system_root" />
+
+    <menuitem id="frais_deplacement"  name="Frais de Deplacement" parent="hr_system_root"/>
+
+    <menuitem id="avance_salaire" name="Avance sur Salaire" parent="hr_system_root" />
+
+    <menuitem id="demande_document_travail" name="Demande Documents Travail" parent="hr_system_root" />
+
+    <menuitem id="Configuration" name="Configuration" parent="hr_system_root" groups="hr_system.group_demande_sortie_hr" />
+
+</odoo>

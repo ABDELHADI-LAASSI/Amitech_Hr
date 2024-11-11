@@ -1,0 +1,118 @@
+<odoo>
+    <!-- Kanban View -->
+    <record id="view_ordre_mission_kanban_user" model="ir.ui.view">
+        <field name="name">ordre.mission.kanban.user</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
+                                <span style="font-weight: bold;"><field name="type_mission_id" /></span>
+                                <span style="font-weight: bold;"><field name="montant" /> MAD</span>
+                            </div>
+                            <div>
+                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/> le <field style="font-weight: bold;" name="date"/></p>
+                                <p>Mission de : <field style="font-weight: bold;" name="name"/></p>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
+                                <field name="state" widget="badge" decoration-danger="state == 'refused' or state == 'manager_reject'" decoration-success="state == 'done'" decoration-muted="state == 'pending'" decoration-info="state == 'manager_approval'" />
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_ordre_mission_search_user" model="ir.ui.view">
+        <field name="name">ordre.mission.search.user</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="filter_pending" string="En attente" domain="[('state', '=', 'pending')]"/>
+                <filter name="group_by_state" string="Statut" context="{'group_by' : 'state'}" />
+                <searchpanel>
+                    <field name="state" icon="fa-filter" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_ordre_mission_calendar_user" model="ir.ui.view">
+        <field name="name">ordre.mission.calendar.user</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <calendar string="Ordres de Mission" date_start="date" color="state" mode="month" quick_create="0">
+                <field name="user_id"/>
+                <field name="type_mission_id"/>
+                <field name="montant"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_ordre_mission_tree_user" model="ir.ui.view">
+        <field name="name">ordre.mission.tree.user</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="user_id" />
+                <field name="date" />
+                <field name="type_mission_id" />
+                <field name="montant" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_ordre_mission_form_user" model="ir.ui.view">
+        <field name="name">ordre.mission.form.user</field>
+        <field name="model">ordre.mission</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" readonly="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="user_id" readonly="1" />
+                            <field name="date" />
+                            <field name="type_mission_id" />
+                            <field name="montant" />
+                            <field name="mission_description" widget="text" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="view_ordre_mission_action_user" model="ir.actions.act_window">
+        <field name="name">Ordres de Mission</field>
+        <field name="res_model">ordre.mission</field>
+        <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_ordre_mission_kanban_user')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_ordre_mission_calendar_user')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_ordre_mission_tree_user')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_ordre_mission_form_user')})]"/>
+        <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_user')])]"/>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ordre_mission_user"
+        name="Ordres de Mission"
+        parent="order_mission"
+        action="view_ordre_mission_action_user"
+        groups="hr_system.group_demande_sortie_user"
+        sequence="50"/>
+</odoo>

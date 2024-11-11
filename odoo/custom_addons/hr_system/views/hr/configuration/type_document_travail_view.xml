@@ -1,0 +1,35 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_type_document_travail_tree" model="ir.ui.view">
+        <field name="name">type.document.travail.tree</field>
+        <field name="model">type.document.travail</field>
+        <field name="arch" type="xml">
+            <tree string="Types de Document de Travail">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_type_document_travail_form" model="ir.ui.view">
+        <field name="name">type.document.travail.form</field>
+        <field name="model">type.document.travail</field>
+        <field name="arch" type="xml">
+            <form string="Type de Document de Travail">
+                <group>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_type_document_travail" model="ir.actions.act_window">
+        <field name="name">Types de Document de Travail</field>
+        <field name="res_model">type.document.travail</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_type_document_travail" name="Types de Document de Travail" parent="Configuration" action="action_type_document_travail"/>
+</odoo>

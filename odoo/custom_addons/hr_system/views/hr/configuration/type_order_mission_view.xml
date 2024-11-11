@@ -1,0 +1,35 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_type_mission_tree" model="ir.ui.view">
+        <field name="name">type.mission.tree</field>
+        <field name="model">type.mission</field>
+        <field name="arch" type="xml">
+            <tree string="Types de Missions">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_type_mission_form" model="ir.ui.view">
+        <field name="name">type.mission.form</field>
+        <field name="model">type.mission</field>
+        <field name="arch" type="xml">
+            <form string="Type de Mission">
+                <group>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_type_mission" model="ir.actions.act_window">
+        <field name="name">Types de Missions</field>
+        <field name="res_model">type.mission</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_type_mission" name="Types des Ordres de Mission" parent="Configuration" action="action_type_mission"/>
+</odoo>

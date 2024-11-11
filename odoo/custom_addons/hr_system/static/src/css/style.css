@@ -1,0 +1,39 @@
+.reject_button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.accept_button {
+    background-color: #28a745;
+    color: white;
+}
+
+
+.accept_button:hover {
+    background-color: #28a745;
+    color: white;
+}
+
+.reject_button:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btns {
+    display: flex;
+    column-gap: 15px;
+}
+
+.o_menu_sections , .o_menu_systray , header .dropdown-toggle , header .o_menu_brand , .o_main_navbar , .o_nav_entry {
+    background-color: #009fe3 !important;
+    color: white !important;
+}
+
+.o_main_navbar {
+    border: none;
+}
+
+
+.o-mail-DiscussSystray-class {
+    display: none ! important;
+}

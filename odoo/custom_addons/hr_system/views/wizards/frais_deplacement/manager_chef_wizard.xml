@@ -1,0 +1,18 @@
+<odoo>
+    <record id="view_frais_deplacement_wizard_manager_chef" model="ir.ui.view">
+        <field name="name">frais.deplacement.wizard.chefmanager</field>
+        <field name="model">frais.deplacement.wizard.chefmanager</field>
+        <field name="arch" type="xml">
+            <form string="Reject la Demande de frais de deplacement">
+                <group>
+                    <field name="message_refused_by_manager_chef"/>
+                </group>
+                <footer>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button string="Reject" type="object" name="action_reject" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

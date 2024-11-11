@@ -1,0 +1,35 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_type_avance_salaire_tree" model="ir.ui.view">
+        <field name="name">type.avance.salaire.tree</field>
+        <field name="model">type.avance.salaire</field>
+        <field name="arch" type="xml">
+            <tree string="Types d'Avance Salaire">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_type_avance_salaire_form" model="ir.ui.view">
+        <field name="name">type.avance.salaire.form</field>
+        <field name="model">type.avance.salaire</field>
+        <field name="arch" type="xml">
+            <form string="Type d'Avance Salaire">
+                <group>
+                    <field name="name"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_type_avance_salaire" model="ir.actions.act_window">
+        <field name="name">Types d'Avance Salaire</field>
+        <field name="res_model">type.avance.salaire</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_type_avance_salaire" name="Types d'Avance Salaire" parent="Configuration" action="action_type_avance_salaire"/>
+</odoo>

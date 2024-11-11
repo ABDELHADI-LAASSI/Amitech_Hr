@@ -1,0 +1,108 @@
+<odoo>
+    <record id="view_demande_sortie_kanban_user" model="ir.ui.view">
+        <field name="name">demande.sortie.kanban.user</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px"> 
+                                <span style="font-weight: bold;"><field name="type_sortie_id" /></span>
+                                <span style="font-weight: bold;"><field name="duration" /> heures</span>
+                            </div>
+                            <div>
+                                <p>À partir du  <field style="font-weight: bold;" name="date" /></p>
+                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/> </p>
+
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
+                                <field name="state" widget="badge" decoration-danger="state == 'refused' or state == 'manager_reject'" decoration-success="state == 'done'" decoration-muted="state == 'pending'" decoration-info="state == 'manager_approval'" />
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_search_user" model="ir.ui.view">
+        <field name="name">demande.sortie</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <search>
+                    <filter name="filter_pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                    <filter name="group_by_state" string="State" context="{'group_by' : 'state'}" />
+                    <searchpanel>
+                        <field name="state" icon="fa-filter" enable_counters="1"/>
+                    </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_calendar_user" model="ir.ui.view">
+        <field name="name">demande.sortie.calendar.user</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <calendar string="Demande de Sortie" date_start="date" date_stop="date" color="state" mode="week" quick_create="0">
+                <field name="duration"/>
+                <field name="user_id"/>
+                <field name="type_sortie_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_tree_user" model="ir.ui.view">
+        <field name="name">demande.sortie.tree.user</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="user_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_form_user" model="ir.ui.view">
+        <field name="name">demande.sortie.form.user</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <form>
+                <!-- Add your form view structure here -->
+                <header>
+                    <field name="state" widget="statusbar" readonly="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1" />
+                            <field name="date" />
+                            <field name="duration"  />
+                            <field name="type_sortie_id"/>
+                            <field name="reason" widget="text"  />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_action_user" model="ir.actions.act_window">
+        <field name="name">Demande Sortie</field>
+        <field name="res_model">demande.sortie</field>
+        <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_demande_sortie_kanban_user')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_demande_sortie_calendar_user')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_demande_sortie_tree_user')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_demande_sortie_form_user')})]"/>
+        <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_user')])]"/>
+    </record>
+
+
+    <menuitem id="menu_demande_sortie_user"
+        name="Demande de Sortie (user)"
+        parent="demande_sortie_root"
+        action="view_demande_sortie_action_user"
+        groups="hr_system.group_demande_sortie_user"
+        sequence="30"/>
+</odoo>

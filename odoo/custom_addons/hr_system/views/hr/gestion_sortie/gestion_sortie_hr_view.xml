@@ -1,0 +1,124 @@
+<odoo>
+    <record id="view_demande_sortie_kanban_hr" model="ir.ui.view">
+        <field name="name">demande.sortie.kanban.hr</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <!-- Add your kanban view structure here -->
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px"> 
+                                <span style="font-weight: bold;"><field name="type_sortie_id" /></span>
+                                <span style="font-weight: bold;"><field name="duration" /> heures</span>
+                            </div>
+                            <div>
+                                <p>À partir du  <field style="font-weight: bold;" name="date" /></p>
+                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/> </p>
+
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
+                                <field name="state" widget="badge" decoration-danger="state == 'refused'" decoration-success="state == 'done'" decoration-muted="state == 'manager_approval'" />
+    
+                                <!-- Accept button is visible if state is 'manager_reject' or 'pending' -->
+                                
+                                <div class="btns">
+                                    <t t-if="record.state.raw_value == 'manager_approval' or record.state.raw_value == 'refused' ">
+                                        <button name="approved_by_hr" type="object" class="accept_button" >
+                                            <i class="fa fa-thumbs-up"/> Accepter
+                                        </button>
+                                    </t>
+        
+                                    <!-- Reject button is visible if state is 'manager_approval' or 'pending' -->
+                                    <t t-if="record.state.raw_value == 'manager_approval' or record.state.raw_value == 'done' ">
+                                        <button name="refused_by_hr" type="object" class="reject_button">
+                                            <i class="fa fa-times"/> Refuser
+                                        </button>
+                                    </t>
+                                </div>
+
+                                <!-- <t t-if="record.state.raw_value == 'pending' ">
+                                    <button name="action_manager_reject" type="object" string="Refuse" class="btn-danger" />
+                                </t> -->
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_calendar_hr" model="ir.ui.view">
+        <field name="name">demande.sortie.calendar.hr</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <calendar string="Demande de Sortie" date_start="date" date_stop="date" color="state" mode="week" quick_create="0">
+                <field name="duration"/>
+                <field name="user_id"/>
+                <field name="type_sortie_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_tree_hr" model="ir.ui.view">
+        <field name="name">demande.sortie.tree.hr</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <tree>
+                <!-- Add your tree view structure here -->
+                <field name="user_id" />
+                <field name="date" />
+                <field name="duration" />
+                <field name="type_sortie_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_form_hr" model="ir.ui.view">
+        <field name="name">demande.sortie.form.hr</field>
+        <field name="model">demande.sortie</field>
+        <field name="arch" type="xml">
+            <form>
+                <!-- Add your form view structure here -->
+                <header>
+                    <field name="state" widget="statusbar" readonly="1"/>
+                    <button name="approved_by_hr" type="object" string="Accepter" class="accept_button" invisible="state not in ('manager_approval', 'refused')"/>
+                    <button name="refused_by_hr" type="object" string="Refuser" class="reject_button" invisible="state not in ('manager_approval', 'done')"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1" />
+                            <field name="date" readonly="1" />
+                            <field name="reason" widget="text" readonly="1"  />
+                            <field name="duration" readonly="1" />
+                            <field name="type_sortie_id" readonly="1" />
+                            <field name="message_refused_by_hr" invisible="state not in ('refused')" />
+                        </group>
+                    </group>
+                </sheet>
+                
+            </form>
+        </field>
+    </record>
+
+    <record id="view_demande_sortie_action_hr" model="ir.actions.act_window">
+        <field name="name">Demande Sortie</field>
+        <field name="res_model">demande.sortie</field>
+        <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_demande_sortie_kanban_hr')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_demande_sortie_calendar_hr')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_demande_sortie_tree_hr')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_demande_sortie_form_hr')})]"/>
+        <field name="domain">[('state', 'in', ['refused','done','manager_approval'])]</field>
+        <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_hr')])]"/>
+    </record>
+
+    <menuitem id="menu_demande_sortie_hr"
+        name="Demande de Sortie (hr)"
+        parent="demande_sortie_root"
+        action="view_demande_sortie_action_hr"
+        groups="hr_system.group_demande_sortie_hr"
+        sequence="30"/>
+</odoo>

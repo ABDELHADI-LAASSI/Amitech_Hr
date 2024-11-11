@@ -1,0 +1,201 @@
+<odoo>
+    <!-- Kanban View -->
+    <record id="view_frais_deplacement_kanban" model="ir.ui.view">
+        <field name="name">frais.deplacement.kanban</field>
+        <field name="model">frais.deplacement</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <template>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
+                                <span style="font-weight: bold;"><field name="type_frais_id" /></span>
+                                <span style="font-weight: bold;"><field name="montant" /> MAD</span>
+                            </div>
+                            <div>
+                                <p>Date : <field style="font-weight: bold;" name="date" /> </p>
+                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/></p>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between" groups="hr_system.group_demande_sortie_manager">
+                                <field name="state" widget="badge" decoration-danger="state == 'manager_reject'" decoration-success="state == 'manager_approval'" decoration-muted="state == 'pending'" />
+    
+                                
+                                
+                                <div class="btns">
+                                    <t t-if="record.state.raw_value == 'pending' or record.state.raw_value == 'manager_reject' ">
+                                        <button name="approved_by_manager" type="object" class="accept_button" >
+                                            <i class="fa fa-thumbs-up"/> Accepter
+                                        </button>
+                                    </t>
+        
+                                    
+                                    <t t-if="record.state.raw_value == 'pending' or record.state.raw_value == 'manager_approval' ">
+                                        <button name="refused_by_manager" type="object" class="reject_button">
+                                            <i class="fa fa-times"/> Refuser
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between" groups="hr_system.group_demande_sortie_manager_2">
+                                <field name="state" widget="badge" decoration-danger="state == 'manager_chef_reject'" decoration-success="state == 'manager_chef_approval'" decoration-muted="state == 'manager_approval'" />
+    
+                                
+                                
+                                <div class="btns">
+                                    <t t-if="record.state.raw_value == 'manager_chef_reject' or record.state.raw_value == 'manager_approval' ">
+                                        <button name="approved_by_manager_chef" type="object" class="accept_button" >
+                                            <i class="fa fa-thumbs-up"/> Accepter
+                                        </button>
+                                    </t>
+        
+                                    
+                                    <t t-if="record.state.raw_value == 'manager_chef_approval' or record.state.raw_value == 'manager_approval' ">
+                                        <button name="refused_by_manager_chef" type="object" class="reject_button">
+                                            <i class="fa fa-times"/> Refuser
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between" groups="hr_system.group_demande_sortie_hr">
+                                <field name="state" widget="badge" decoration-danger="state == 'refused'" decoration-success="state == 'done'" decoration-muted="state == 'manager_chef_approval'" />
+    
+                                
+                                <div class="btns">
+                                    <t t-if="record.state.raw_value == 'refused' or record.state.raw_value == 'manager_chef_approval' ">
+                                        <button name="approved_by_hr" type="object" class="accept_button" >
+                                            <i class="fa fa-thumbs-up"/> Accepter
+                                        </button>
+                                    </t>
+        
+                                    <t t-if="record.state.raw_value == 'done' or record.state.raw_value == 'manager_chef_approval' ">
+                                        <button name="refused_by_hr" type="object" class="reject_button">
+                                            <i class="fa fa-times"/> Refuser
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between" groups="hr_system.group_demande_sortie_finance">
+                                <field name="state" widget="badge" decoration-danger="state == 'finance_reject'" decoration-success="state == 'finance_approval'" decoration-muted="state == 'done'" />
+    
+                                
+                                <div class="btns">
+                                    <t t-if="record.state.raw_value == 'finance_reject' or record.state.raw_value == 'done' ">
+                                        <button name="approved_by_finance" type="object" class="accept_button" >
+                                            <i class="fa fa-thumbs-up"/> Accepter
+                                        </button>
+                                    </t>
+        
+                                    <t t-if="record.state.raw_value == 'finance_approval' or record.state.raw_value == 'done' ">
+                                        <button name="refused_by_finance" type="object" class="reject_button">
+                                            <i class="fa fa-times"/> Refuser
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between" groups="hr_system.group_demande_sortie_user">
+                                <field name="state" widget="badge" decoration-danger="state == 'refused' or state == 'manager_reject' or state == 'manager_chef_reject' or state == 'finance_reject'" decoration-success="state == 'finance_approval'" decoration-muted="state == 'pending'" decoration-info="state == 'manager_approval' or state == 'manager_chef_approval' or state == 'done'"/>
+                            </div>
+                        </div>
+                    </t>
+                </template>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_frais_deplacement_calendar" model="ir.ui.view">
+        <field name="name">frais.deplacement.calendar</field>
+        <field name="model">frais.deplacement</field>
+        <field name="arch" type="xml">
+            <calendar string="Frais de Déplacement" date_start="date">
+                <field name="user_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_frais_deplacement_tree" model="ir.ui.view">
+        <field name="name">frais.deplacement.tree</field>
+        <field name="model">frais.deplacement</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="user_id"/>
+                <field name="date"/>
+                <field name="montant"/>
+                <field name="type_frais_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_frais_deplacement_search" model="ir.ui.view">
+        <field name="name">frais.deplacement</field>
+        <field name="model">frais.deplacement</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="filter_pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="group_by_state" string="State" context="{'group_by' : 'state'}" />
+                <searchpanel>
+                    <field name="state" icon="fa-filter" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_frais_deplacement_form" model="ir.ui.view">
+        <field name="name">frais.deplacement.form</field>
+        <field name="model">frais.deplacement</field>
+        <field name="arch" type="xml">
+            <form string="Remboursement des Frais de Déplacement">
+                <header style="display: flex !important; flex-direction: column-reverse; row-gap: 2rem;">
+                    <field name="state" widget="statusbar" readonly="1"/>
+                    <div style="displau:flex ; column-gap: 1rem:" groups="hr_system.group_demande_sortie_manager">
+                        <button name="approved_by_manager" type="object" string="Accepter" class="accept_button" invisible="state not in ('manager_reject', 'pending')"/>
+                        <button name="refused_by_manager" type="object" string="Refuser" class="reject_button" invisible="state not in ('manager_approval', 'pending')"/>
+                    </div>
+                    <div style="displau:flex ; column-gap: 1rem:" groups="hr_system.group_demande_sortie_manager_2">
+                        <button name="approved_by_manager_chef" type="object" string="Accepter" class="accept_button" invisible="state not in ('manager_chef_reject', 'manager_approval')"/>
+                        <button name="refused_by_manager_chef" type="object" string="Refuser" class="reject_button" invisible="state not in ('manager_chef_approval', 'manager_approval')"/>
+                    </div>
+                    <div style="displau:flex ; column-gap: 1rem:" groups="hr_system.group_demande_sortie_finance">
+                        <button name="approved_by_finance" type="object" string="Accepter" class="accept_button" invisible="state not in ('finance_reject', 'done')"/>
+                        <button name="refused_by_finance" type="object" string="Refuser" class="reject_button" invisible="state not in ('finance_approval', 'done')"/>
+                    </div>
+                    <div style="displau:flex ; column-gap: 1rem:" groups="hr_system.group_demande_sortie_hr">
+                        <button name="approved_by_hr" type="object" string="Accepter" class="accept_button" invisible="state not in ('refused', 'manager_chef_approval')"/>
+                        <button name="refused_by_hr" type="object" string="Refuser" class="reject_button" invisible="state not in ('done', 'manager_chef_approval')"/>
+                    </div>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="user_id" readonly="1"/>
+                        <field name="date"/>
+                        <field name="montant"/>
+                        <field name="type_frais_id"/>
+                        <field name="mission"/>
+                        <field name="commentaire"/>
+
+                        <field name="message_refused_by_manager" readonly="1" invisible="state not in ('manager_reject')" />
+                        <field name="message_refused_by_manager_chef" readonly="1" invisible="state not in ('manager_chef_reject')" />
+                        <field name="message_refused_by_finance" readonly="1" invisible="state not in ('finance_reject')" />
+                        <field name="message_refused_by_hr" readonly="1" invisible="state not in ('refused')" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_frais_deplacement" model="ir.actions.act_window">
+        <field name="name">Frais de Déplacement</field>
+        <field name="res_model">frais.deplacement</field>
+        <field name="view_mode">kanban,tree,form,calendar</field>
+        <field name="context">{}</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_frais_deplacement" name="Frais de Déplacement" parent="frais_deplacement" action="action_frais_deplacement" sequence="10"/>
+</odoo>

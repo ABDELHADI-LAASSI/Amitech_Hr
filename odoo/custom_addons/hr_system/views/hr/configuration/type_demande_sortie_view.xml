@@ -1,0 +1,38 @@
+<odoo>
+    <!-- Tree View for TypeDemandeSortie -->
+    <record id="view_type_demande_sortie_tree" model="ir.ui.view">
+        <field name="name">type.demande.sortie.tree</field>
+        <field name="model">type.demande.sortie</field>
+        <field name="arch" type="xml">
+            <tree string="Type de Demande de Sortie">
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View for TypeDemandeSortie -->
+    <record id="view_type_demande_sortie_form" model="ir.ui.view">
+        <field name="name">type.demande.sortie.form</field>
+        <field name="model">type.demande.sortie</field>
+        <field name="arch" type="xml">
+            <form string="Type de Demande de Sortie">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to Open Tree and Form Views -->
+    <record id="action_type_demande_sortie_tree" model="ir.actions.act_window">
+        <field name="name">Type de Demande de Sortie</field>
+        <field name="res_model">type.demande.sortie</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_type_demande_sortie_tree"/>
+    </record>
+
+    <!-- Menu Item for Demandes with Parent Configuration -->
+    <menuitem id="menu_type_demande_sortie" name="Types de Demandes de Sortie" parent="Configuration" action="action_type_demande_sortie_tree" />
+</odoo>

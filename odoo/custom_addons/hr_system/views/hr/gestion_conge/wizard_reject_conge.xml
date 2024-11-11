@@ -1,0 +1,17 @@
+<odoo>
+    <record id="view_gestion_conge_reject_wizard_form_hr" model="ir.ui.view">
+        <field name="name">gestion.conge.reject.wizard.form.hr</field>
+        <field name="model">gestion.conge.reject.wizard.hr</field>
+        <field name="arch" type="xml">
+            <form string="Refuser la Demande de Congé">
+                <group>
+                    <field name="message_refused_by_hr"/>
+                </group>
+                <footer>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button string="Reject" type="object" name="action_reject" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

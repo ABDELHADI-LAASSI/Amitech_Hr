@@ -1,0 +1,116 @@
+<odoo>
+    <!-- Kanban View -->
+    <record id="view_heures_sup_kanban_user" model="ir.ui.view">
+        <field name="name">heures.sup.kanban.user</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px"> 
+                                <span style="font-weight: bold;"><field name="type_heures_sup_id" /></span>
+                                <span style="font-weight: bold;"><field name="nombre_heures" /> heures</span>
+                            </div>
+                            <div>
+                                <p>À partir du <field style="font-weight: bold;" name="date" /></p>
+                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/> </p>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
+                                <field name="state" widget="badge" decoration-danger="state == 'refused' or state == 'manager_reject'" decoration-success="state == 'done'" decoration-muted="state == 'pending'" decoration-info="state == 'manager_approval'" />
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_heures_sup_search_user" model="ir.ui.view">
+        <field name="name">demande.heures.sup</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter name="filter_pending" string="En attente" domain="[('state', '=', 'pending')]"/>
+                <filter name="group_by_state" string="Statut" context="{'group_by' : 'state'}" />
+                <searchpanel>
+                    <field name="state" icon="fa-filter" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_heures_sup_calendar_user" model="ir.ui.view">
+        <field name="name">heures.sup.calendar.user</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <calendar string="Demandes d'heures supplémentaires" date_start="date" date_stop="date" color="state" mode="week" quick_create="0">
+                <field name="user_id"/>
+                <field name="type_heures_sup_id"/>
+                <field name="nombre_heures"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_heures_sup_tree_user" model="ir.ui.view">
+        <field name="name">heures.sup.tree.user</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="user_id" />
+                <field name="date" />
+                <field name="type_heures_sup_id" />
+                <field name="nombre_heures" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_heures_sup_form_user" model="ir.ui.view">
+        <field name="name">heures.sup.form.user</field>
+        <field name="model">demande.heures.sup</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" readonly="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1" />
+                            <field name="date" />
+                            <field name="nombre_heures" />
+                            <field name="type_heures_sup_id"/>
+                            <field name="commentaires" widget="text" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="view_heures_sup_action_user" model="ir.actions.act_window">
+        <field name="name">Demandes d'heures supplémentaires</field>
+        <field name="res_model">demande.heures.sup</field>
+        <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_heures_sup_kanban_user')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_heures_sup_calendar_user')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_heures_sup_tree_user')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_heures_sup_form_user')})]"/>
+        <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_user')])]"/>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_heures_sup_user"
+        name="Demandes d'heures supplémentaires"
+        parent="demande_hours_supp_root"
+        action="view_heures_sup_action_user"
+        groups="hr_system.group_demande_sortie_user"
+        sequence="30"/>
+</odoo>

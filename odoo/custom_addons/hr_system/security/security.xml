@@ -1,0 +1,29 @@
+<odoo>
+    
+    <!-- Manager Group -->
+    <record id="group_demande_sortie_manager" model="res.groups">
+        <field name="name">Manager Group</field>
+    </record>
+
+    <!--  Manager 2 Group -->
+    <record id="group_demande_sortie_manager_2" model="res.groups">
+        <field name="name">Manager chief Group</field>
+    </record>
+    
+    <!-- User Group -->
+    <record id="group_demande_sortie_user" model="res.groups">
+        <field name="name">User Group</field>
+    </record>
+    
+    <!-- HR Group -->
+    <record id="group_demande_sortie_hr" model="res.groups">
+        <field name="name">HR Group</field>
+    </record>
+
+    <!-- Finance Group -->
+    <record id="group_demande_sortie_finance" model="res.groups">
+        <field name="name">Finance Group</field>
+    </record>
+
+
+</odoo>

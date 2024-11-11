@@ -1,0 +1,115 @@
+<odoo>
+    <!-- Kanban View -->
+    <record id="view_declaration_retard_kanban_manager" model="ir.ui.view">
+        <field name="name">declaration.retard.kanban.manager</field>
+        <field name="model">declaration.retard</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px"> 
+                                <span style="font-weight: bold;"><field name="type_retard_id" /></span>
+                            </div>
+                            <div>
+                                <p>À partir du  <field style="font-weight: bold;" name="date" /></p>
+                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/> </p>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
+                                <field name="state" widget="badge" decoration-danger="state == 'manager_reject'" decoration-success="state == 'manager_approval'" decoration-muted="state == 'pending'" />
+
+                                <!-- Accept and Reject buttons for the manager -->
+                                <div class="btns">
+                                    <t t-if="record.state.raw_value == 'pending' or record.state.raw_value == 'manager_reject' ">
+                                        <button name="approved_by_manager" type="object" class="accept_button" >
+                                            <i class="fa fa-thumbs-up"/> Accepter
+                                        </button>
+                                    </t>
+                                    <t t-if="record.state.raw_value == 'pending' or record.state.raw_value == 'manager_approval' ">
+                                        <button name="refused_by_manager" type="object" class="reject_button">
+                                            <i class="fa fa-times"/> Refuser
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Calendar View -->
+    <record id="view_declaration_retard_calendar_manager" model="ir.ui.view">
+        <field name="name">declaration.retard.calendar.manager</field>
+        <field name="model">declaration.retard</field>
+        <field name="arch" type="xml">
+            <calendar string="Déclaration de Retard" date_start="date" date_stop="date" color="state" mode="week" quick_create="0">
+                <field name="user_id"/>
+                <field name="type_retard_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="view_declaration_retard_tree_manager" model="ir.ui.view">
+        <field name="name">declaration.retard.tree.manager</field>
+        <field name="model">declaration.retard</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="user_id" />
+                <field name="date" />
+                <field name="type_retard_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_declaration_retard_form_manager" model="ir.ui.view">
+        <field name="name">declaration.retard.form.manager</field>
+        <field name="model">declaration.retard</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" readonly="1"/>
+                    <button name="approved_by_manager" type="object" string="Accepter" class="accept_button" invisible="state not in ('manager_reject', 'pending')"/>
+                    <button name="refused_by_manager" type="object" string="Refuser" class="reject_button" invisible="state not in ('manager_approval', 'pending')"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1" />
+                            <field name="date" readonly="1" />
+                            <field name="type_retard_id" readonly="1" />
+                            <field name="reason" widget="text" readonly="1"  />
+                            <field name="message_refused_by_manager" invisible="state not in ('manager_reject')" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="view_declaration_retard_action_manager" model="ir.actions.act_window">
+        <field name="name">Déclaration de Retard (Manager)</field>
+        <field name="res_model">declaration.retard</field>
+        <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_declaration_retard_kanban_manager')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_declaration_retard_calendar_manager')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_declaration_retard_tree_manager')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_declaration_retard_form_manager')})]"/>
+        <field name="domain">[('state', 'in', ['pending', 'manager_approval', 'manager_reject'])]</field>
+        <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_manager')])]"/>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_declaration_retard_manager"
+        name="Déclaration de Retard (Manager)"
+        parent="declaration_retard_root"
+        action="view_declaration_retard_action_manager"
+        groups="hr_system.group_demande_sortie_manager"
+        sequence="30"/>
+</odoo>

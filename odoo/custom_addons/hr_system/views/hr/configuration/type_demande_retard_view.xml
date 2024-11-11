@@ -1,0 +1,38 @@
+<odoo>
+    <!-- Tree View for TypeDemandeRetard -->
+    <record id="view_type_demande_retard_tree" model="ir.ui.view">
+        <field name="name">type.demande.retard.tree</field>
+        <field name="model">type.demande.retard</field>
+        <field name="arch" type="xml">
+            <tree string="Type de Demande de Retard">
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View for TypeDemandeRetard -->
+    <record id="view_type_demande_retard_form" model="ir.ui.view">
+        <field name="name">type.demande.retard.form</field>
+        <field name="model">type.demande.retard</field>
+        <field name="arch" type="xml">
+            <form string="Type de Demande de Retard">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to Open Tree and Form Views -->
+    <record id="action_type_demande_retard_tree" model="ir.actions.act_window">
+        <field name="name">Type de Demande de Retard</field>
+        <field name="res_model">type.demande.retard</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_type_demande_retard_tree"/>
+    </record>
+
+    <!-- Menu Item for Demandes de Retard with Parent Configuration -->
+    <menuitem id="menu_type_demande_retard" name="Types de Déclaration de Retard" parent="Configuration" action="action_type_demande_retard_tree" />
+</odoo>

@@ -1,0 +1,18 @@
+<odoo>
+    <!-- Wizard form view -->
+    <record id="view_demande_heures_sup_reject_wizard_form_manager" model="ir.ui.view">
+        <field name="name">demande.heures.sup.reject.manager</field>
+        <field name="model">demande.heures.sup.wizard.manager</field>
+        <field name="arch" type="xml">
+            <form string="Reject la Demande de Heures Supplementaires">
+                <group>
+                    <field name="message_refused_by_manager"/>
+                </group>
+                <footer>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button string="Reject" type="object" name="action_reject" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

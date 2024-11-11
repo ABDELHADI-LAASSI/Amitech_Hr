@@ -1,0 +1,37 @@
+<odoo>
+    <!-- Tree View for TypeHeuresSup -->
+    <record id="view_type_heures_sup_tree" model="ir.ui.view">
+        <field name="name">type.heures.sup.tree</field>
+        <field name="model">type.heures.sup</field>
+        <field name="arch" type="xml">
+            <tree string="Types d'Heures Supplémentaires">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View for TypeHeuresSup -->
+    <record id="view_type_heures_sup_form" model="ir.ui.view">
+        <field name="name">type.heures.sup.form</field>
+        <field name="model">type.heures.sup</field>
+        <field name="arch" type="xml">
+            <form string="Type d'Heures Supplémentaires">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action for Tree and Form Views -->
+    <record id="action_type_heures_sup" model="ir.actions.act_window">
+        <field name="name">Types d'Heures Supplémentaires</field>
+        <field name="res_model">type.heures.sup</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_type_heures_sup" name="Types d'Heures Supplémentaires" parent="Configuration" action="action_type_heures_sup"/>
+</odoo>

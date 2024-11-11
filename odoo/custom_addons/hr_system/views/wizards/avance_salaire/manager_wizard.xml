@@ -1,0 +1,18 @@
+<odoo>
+    <record id="view_avance_salaire_wizard_manager" model="ir.ui.view">
+        <field name="name">avance.salaire.wizard.manager</field>
+        <field name="model">avance.salaire.wizard.manager</field>
+        <field name="arch" type="xml">
+            <form string="Reject la Demande d'avance salaire">
+                <group>
+                    <field name="message_refused_by_manager"/>
+                </group>
+                <footer>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button string="Reject" type="object" name="action_reject" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

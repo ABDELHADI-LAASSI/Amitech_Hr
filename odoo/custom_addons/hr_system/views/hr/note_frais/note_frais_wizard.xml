@@ -1,0 +1,18 @@
+<odoo>
+    <!-- Wizard form view -->
+    <record id="view_demande_note_frais_reject_wizard_form_hr" model="ir.ui.view">
+        <field name="name">demande.note.frais.reject.hr.wizard.hr</field>
+        <field name="model">demande.note.frais.reject.hr.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Reject la Demande de note de frais">
+                <group>
+                    <field name="message_refused_by_hr"/>
+                </group>
+                <footer>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button string="Reject" type="object" name="action_reject" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
