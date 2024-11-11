@@ -15,11 +15,8 @@
 .login_template_container {
     width: 100%;
     display: grid;
-    grid-template-columns: 70% 30%;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    border-radius: 30px;
+    grid-template-columns: 1fr 400px;
+    column-gap: 3rem;
     overflow: hidden;
     margin-top: 5rem;
 
@@ -34,8 +31,82 @@
     height: 100% !important;
 }
 
-main {
-    background-color: red;
+main , .login_template_container , .card-body{
+    background-color: hsl(var(--hue),var(--sat),98%) !important;
+}
+
+.logo_part img {
+    width: 300px;
+}
+
+.logo_part h2 {
+    color: #003a5d;
+    margin: 1rem 0;
+    font-size: 35px;
 }
 
 
+.logo_part a {
+    text-decoration: none;
+    color: #003a5d !important;
+    font-size: 18px;
+}
+
+.form_page form {
+    width: 100%;
+    padding: 1.5rem;
+    background-color: #003a5d;
+    color: white;
+    border-radius: 25px;
+}
+
+.form_page h1 {
+    margin-bottom: 4rem;
+}
+
+.form_page .form-group {
+    margin-bottom: 1rem;
+    display: grid;
+    row-gap: 15px;
+}
+
+.form_page .form-group label {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.form_page .form-group input {
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+    padding: 12px 10px;
+}
+
+.form_page .form-group input::placeholder {
+    color: white;
+}
+
+.form_page button {
+    width: 100%;
+    font-weight: bold;
+    margin-bottom: 10px;
+    background-color: white;
+    color: #003a5d;
+    border: none;
+    padding: .7rem;
+}
+
+.form_page a {
+    color: white;
+    font-size: 12px;
+}
+
+.custom_reset_password h2 {
+    margin-bottom: 1rem;
+    color: white;
+}
+
+
+.form_page p {
+    margin-bottom: 3rem;
+}
