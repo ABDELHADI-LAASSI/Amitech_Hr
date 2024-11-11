@@ -3,14 +3,17 @@
         <xpath expr="//form[@class='oe_login_form']" position="replace">
             
             <div class="login_template_container">
-                <div>
-                    <h1>custom login</h1>
+                <div class="logo_part">
+                    <img src="/custom_login/static/src/img/Amitech.png"></img>
+                    <hr />
+                    <h2> © 2024 Amitech Corporation</h2>
+                    <a href="#">Learn More</a>
                 </div>
-                <div>
+                <div class="form_page">
                     <form class="oe_login_form" role="form" method="post" action="/web/login" autocomplete="off">   
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <div class="custom-title">
-                            <h1>Login</h1>
+                            <h1>Sign in</h1>
                         </div>
     
                         <div class="form-group">
@@ -23,12 +26,12 @@
                             <input type="password" name="password" id="password" placeholder="Enter your password" class="form-control" required="required"/>
                         </div>
     
+                        <div class="form-group-button">
+                            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+                        </div>
     
                         <div class="form-group-password">
-                            <a href="/web/reset_password">Forgot your password?</a>
-                        </div>
-                        <div class="form-group-button">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                            <a href="/web/reset_password">Reset Password</a>
                         </div>
                     </form>
                 </div>
