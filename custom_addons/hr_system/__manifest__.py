@@ -4,11 +4,12 @@
     "category": "",
     "version": "1.0",
     "license": "LGPL-3",
-    "depends": ["base","mail"],
+    "depends": ['base','mail','hr', 'hr_holidays'],
     "data": [
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/base_menu.xml',
+        'views/hr_leave/hr_leave_view.xml',
         'views/frais_deplacement_view.xml',
         'views/avance_salaire_view.xml',
         'views/demande_document_travail_view.xml',
@@ -63,6 +64,7 @@
         #finance
         'views/wizards/frais_deplacement/finance_wizard.xml',
         'views/wizards/avance_salaire/finance_wizard.xml',
+        'report/conge_report.xml',
         'data/conge_manager_accept_template.xml',
     ],
 

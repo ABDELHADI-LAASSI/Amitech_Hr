@@ -1219,7 +1219,7 @@ Attempting to double-book your time off won't magically make your vacation 2x be
         current_employee = self.env.user.employee_id
         self.filtered(lambda hol: hol.validation_type == 'both').write({'state': 'validate1', 'first_approver_id': current_employee.id})
 
-        self.filtered(lambda hol: not hol.validation_type == 'both').action_validate()
+        # self.filtered(lambda hol: not hol.validation_type == 'both').action_validate()
         if not self.env.context.get('leave_fast_create'):
             self.activity_update()
         return True
@@ -1322,6 +1322,12 @@ Attempting to double-book your time off won't magically make your vacation 2x be
         split_leaves.filtered(lambda l: l.state in 'validate')._validate_leave_request()
 
     def action_validate(self):
+
+        if not self.env.user.has_group('hr_holidays.group_hr_holidays_manager'):
+            raise UserError(_('You do not have the necessary permissions to validate time-off requests.'))
+
+
+
         current_employee = self.env.user.employee_id
         leaves = self._get_leaves_on_public_holiday()
         if leaves:
