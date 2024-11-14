@@ -8,3 +8,4 @@ from . import DemandeMIssion
 from . import FraisDeplacement
 from . import DemandeAvanceSalaire
 from . import DemandeDocumentTravail
+from . import HrLeave
