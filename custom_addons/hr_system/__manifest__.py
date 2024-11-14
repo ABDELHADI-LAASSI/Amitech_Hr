@@ -13,15 +13,12 @@
         'views/frais_deplacement_view.xml',
         'views/avance_salaire_view.xml',
         'views/demande_document_travail_view.xml',
-        'views/user/gestion_conge/demande_conge_user.xml',
         'views/user/gestion_sortie/gestion_sortie_user_view.xml',
         'views/user/declaration_retard/declaration_retard_user_view.xml',
         'views/user/demande_hours_supp/demande_hours_supp_user_view.xml',
         'views/user/note_frais/note_frais_user_view.xml',
         'views/user/order_mission/order_mission_user_view.xml',
         # manager
-        'views/manager/gestion_conge/demande_conge_manager.xml',
-        'views/manager/gestion_conge/wizard_reject_conge.xml',
         'views/manager/gestion_sortie/gestion_sortie_manager_view.xml',
         'views/manager/gestion_sortie/wizard_reject_sortie_view.xml',
         'views/manager/declaration_retard/declaration_reatrd_manager_view.xml',
@@ -37,8 +34,6 @@
         'views/wizards/frais_deplacement/manager_chef_wizard.xml',
         'views/wizards/avance_salaire/manager_chef_wizard.xml',
         # hr
-        'views/hr/gestion_conge/demande_conge_hr.xml',
-        'views/hr/gestion_conge/wizard_reject_conge.xml',
         'views/hr/gestion_sortie/gestion_sortie_hr_view.xml',
         'views/hr/gestion_sortie/wizard_reject_sortie_view.xml',
         'views/hr/declaration_retard/declaration_retrd_hr_view.xml',
@@ -52,7 +47,6 @@
         'views/wizards/avance_salaire/hr_wizard.xml',
         'views/wizards/document_Travail/hr_wizard.xml',
         # hr configuration
-        'views/hr/configuration/type_conge_view.xml',
         'views/hr/configuration/type_demande_sortie_view.xml',
         'views/hr/configuration/type_demande_retard_view.xml',
         'views/hr/configuration/type_heures_supp.xml',
@@ -64,8 +58,6 @@
         #finance
         'views/wizards/frais_deplacement/finance_wizard.xml',
         'views/wizards/avance_salaire/finance_wizard.xml',
-        'report/conge_report.xml',
-        'data/conge_manager_accept_template.xml',
     ],
 
 

@@ -25,7 +25,7 @@
 }
 
 .o_menu_sections , .o_menu_systray , header .dropdown-toggle , header .o_menu_brand , .o_main_navbar , .o_nav_entry {
-    background-color: #009fe3 !important;
+    background-color: #003a5d !important;
     color: white !important;
 }
 
@@ -37,3 +37,5 @@
 .o-mail-DiscussSystray-class {
     display: none ! important;
 }
+
+
