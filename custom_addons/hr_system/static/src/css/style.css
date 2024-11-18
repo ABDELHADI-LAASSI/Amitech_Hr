@@ -39,3 +39,12 @@
 }
 
 
+.o_vertical {
+    display: flex !important;
+    flex-direction: row !important;
+    column-gap: 1rem !important;
+}
+
+.o_form_view .o_inner_group {
+    grid-template-columns: fit-content(300px) minmax(0, 1fr) !important;
+}

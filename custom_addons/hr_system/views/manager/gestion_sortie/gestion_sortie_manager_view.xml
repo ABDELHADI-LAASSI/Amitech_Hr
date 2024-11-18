@@ -9,12 +9,10 @@
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px"> 
-                                <span style="font-weight: bold;"><field name="type_sortie_id" /></span>
                                 <span style="font-weight: bold;"><field name="duration" /> heures</span>
                             </div>
                             <div>
-                                <p>À partir du  <field style="font-weight: bold;" name="date" /></p>
-                                <p>Demandé par : <field style="font-weight: bold;" name="user_id"/> </p>
+                                <p>Demandé par : <field style="font-weight: bold;" name="employee_id"/> </p>
 
                             </div>
                             <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
@@ -52,10 +50,9 @@
         <field name="name">demande.sortie.calendar.manager</field>
         <field name="model">demande.sortie</field>
         <field name="arch" type="xml">
-            <calendar string="Demande de Sortie" date_start="date" date_stop="date" color="state" mode="week" quick_create="0">
+            <calendar string="Demande de Sortie" date_start="date_from" date_stop="date_to" color="state" mode="week" quick_create="0">
                 <field name="duration"/>
-                <field name="user_id"/>
-                <field name="type_sortie_id"/>
+                <field name="employee_id"/>
             </calendar>
         </field>
     </record>
@@ -66,7 +63,7 @@
         <field name="arch" type="xml">
             <tree>
                 <!-- Add your tree view structure here -->
-                <field name="user_id" />
+                <field name="employee_id" />
             </tree>
         </field>
     </record>
@@ -85,12 +82,14 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="user_id" readonly="1" />
-                            <field name="date" readonly="1" />
-                            <field name="reason" widget="text" readonly="1"  />
+                            <field name="employee_id" />
+                            <field name="date_from" />
+                            <field name="date_to" />
                             <field name="duration" readonly="1" />
-                            <field name="type_sortie_id" readonly="1" />
-                            <field name="message_refused_by_manager" invisible="state not in ('manager_reject')" />
+                            <field name="Motif_de_notification" />
+                            <field name="reason" widget="text" readonly="1"  />
+                            <field name="type_deduction" />
+                            <field name="message_refused_by_hr" invisible="state not in ('refused')" />
                         </group>
                     </group>
                 </sheet>
