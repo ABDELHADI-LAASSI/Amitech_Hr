@@ -47,7 +47,6 @@
         'views/wizards/avance_salaire/hr_wizard.xml',
         'views/wizards/document_Travail/hr_wizard.xml',
         # hr configuration
-        'views/hr/configuration/type_demande_sortie_view.xml',
         'views/hr/configuration/type_demande_retard_view.xml',
         'views/hr/configuration/type_heures_supp.xml',
         'views/hr/configuration/type_frais_view.xml',
