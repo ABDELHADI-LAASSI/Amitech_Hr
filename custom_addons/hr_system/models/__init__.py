@@ -1,7 +1,6 @@
 from . import DemandeMIssion
 from . import DemandeSortie
 from . import wizards
-from . import DemandeRetard
 from . import DemandeHoursSup
 from . import DemandeNoteFrais
 from . import FraisDeplacement

@@ -8,19 +8,31 @@
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px"> 
-                                <span style="font-weight: bold;"><field name="duration" /> heures</span>
+                                <span style="font-weight: bold;"><field name="type_demande" /></span>
                             </div>
-                            <div>
-                                <p>Demandé par : <field style="font-weight: bold;" name="employee_id"/> </p>
 
+                            <div class="phrases">
+                                <field name="phrase_du_retard" invisible="type_demande not in ('retard')" />
+                                <field name="phrase_du_absence" invisible="type_demande not in ('absence')"/>
+                                <field name="phrase_du_sortie" invisible="type_demande not in ('sortie')"/>
                             </div>
+                            
+            
+                            
+            
                             <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
-                                <field name="state" widget="badge" decoration-danger="state == 'refused' or state == 'manager_reject'" decoration-success="state == 'done'" decoration-muted="state == 'pending'" decoration-info="state == 'manager_approval'" />
+                                <field name="state"
+                                       widget="badge"
+                                       decoration-danger="state == 'refused' or state == 'manager_reject'"
+                                       decoration-success="state == 'done'"
+                                       decoration-muted="state == 'pending'"
+                                       decoration-info="state == 'manager_approval'"/>
                             </div>
                         </div>
                     </t>
                 </templates>
             </kanban>
+            
         </field>
     </record>
 
@@ -66,7 +78,7 @@
             <form>
                 <!-- Add your form view structure here -->
                 <header>
-                    <field name="state" widget="statusbar" readonly="1"/>
+                    <field name="state" widget="statusbar" readonly="1" statusbar_visible="pending"/>
                 </header>
                 <sheet>
                     <group>

@@ -1,3 +1,8 @@
+:root {
+    --primary: #003a5d !important; /* Replace with your desired color */
+}
+
+
 .reject_button {
     background-color: #dc3545;
     color: white;
@@ -39,12 +44,48 @@
 }
 
 
-.o_vertical {
+/* .o_vertical {
     display: flex !important;
     flex-direction: row !important;
     column-gap: 1rem !important;
-}
+} */
 
 .o_form_view .o_inner_group {
     grid-template-columns: fit-content(300px) minmax(0, 1fr) !important;
+    border: none !important;
 }
+
+.o-kanban-button-new , .o_list_button_add {
+    background-color: #003a5d !important;
+    border: none !important;
+    color: white !important;
+}
+
+.o_form_button_create {
+    border: 1px solid #003a5d !important;
+}
+
+.o_form_button_create:hover , .o-kanban-button-new:hover , .o_list_button_add:hover {
+    background-color: #003a5d !important;
+    color: white !important;
+}
+
+
+.btn-primary {
+    background-color: #003a5d !important;
+    border: none !important;
+    color: white !important;
+    transition: .3s;
+}
+
+.btn-primary:hover {
+    background-color: #002d49 !important;
+    color: white !important;
+}
+
+/* .fa {
+    color: white !important;
+    padding: 5px;
+    background: #002d49;
+    border-radius: 5px;
+} */

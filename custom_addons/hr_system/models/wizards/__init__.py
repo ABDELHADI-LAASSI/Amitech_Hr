@@ -2,7 +2,6 @@ from . import RejectWizard
 from . import RejectCongeParHr
 from . import RejectDemenadeSorieManager
 from . import RejectDemenadeSorieHr
-from . import RejectRetardManager
 from . import DemandeHoursSuppWizard
 from . import RejectNoteFrais
 from . import fraisDeplacement

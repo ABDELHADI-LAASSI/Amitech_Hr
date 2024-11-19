@@ -19,7 +19,7 @@ class DemandeSortie(models.Model):
 
     mission_id = fields.Many2one(
         'ordre.mission', 
-        string='Num Mission', 
+        string='Numéro de Mission', 
         domain="[('user_id', '=', uid)]"  # Assumes 'user_id' relates to the user who created the mission
     )
     mission_description = fields.Text(string="Description de la Mission" , related='mission_id.mission_description')
@@ -61,19 +61,19 @@ class DemandeSortie(models.Model):
 
 
     # Retard
-    time_darrive = fields.Datetime( string='Time of Arrival', help='Temps de darrive' )
+    time_darrive = fields.Datetime(string='Heure d\'arrivée', help='Temps d\'arrivée')
     phrase_du_retard = fields.Char(string='Phrase du retard', compute='_compute_phrase_du_retard', store=True)
 
     # Absence
-    absence_start_time = fields.Datetime(string='Start Time of Absence')
-    absence_end_time = fields.Datetime(string='End Time of Absence')
-    phrase_du_absence = fields.Char(string='Phrase du absence', compute='_compute_phrase_du_absence', store=True)
-
+    absence_start_time = fields.Datetime(string='Heure de début de l\'absence')
+    absence_end_time = fields.Datetime(string='Heure de fin de l\'absence')
+    phrase_du_absence = fields.Char(string='Phrase de l\'absence', compute='_compute_phrase_du_absence', store=True)
 
     # Sortie
-    sortie_start_time = fields.Datetime(string='Start Time of Sortie')
-    sortie_end_time = fields.Datetime(string='End Time of Sortie')
-    phrase_du_sortie = fields.Char(string='Phrase du sortie', compute='_compute_phrase_du_sortie', store=True)
+    sortie_start_time = fields.Datetime(string='Heure de début de la sortie')
+    sortie_end_time = fields.Datetime(string='Heure de fin de la sortie')
+    phrase_du_sortie = fields.Char(string='Phrase de la sortie', compute='_compute_phrase_du_sortie', store=True)
+
 
 
     message_refused_by_manager = fields.Text(string="Message du Manager", required=False)
@@ -86,30 +86,46 @@ class DemandeSortie(models.Model):
     def _compute_phrase_du_retard(self):
         for record in self:
             if record.time_darrive:
-                # Get the time part of the arrival time
-                arrival_time = record.time_darrive.time()
+               # Extract the arrival time and add one hour
+                arrival_time = (datetime.combine(datetime.today(), record.time_darrive.time()) + timedelta(hours=1)).time()
 
-                # Define the reference time (08:00)
-                reference_time = time(8, 0)
 
-                # Calculate the time difference between arrival and reference time
-                if arrival_time >= reference_time:
-                    time_diff = datetime.combine(datetime.today(), arrival_time) - datetime.combine(datetime.today(), reference_time)
-                    
+                # Define reference times
+                start_time = time(8, 0)
+                end_time = time(17, 0)
+                break_start = time(12, 0)
+                break_end = time(13, 0)
 
-                    # Convert time difference to hours and minutes
-                    hours, remainder = divmod(time_diff.total_seconds(), 3600)
-                    minutes = remainder // 60
+                # Adjust the arrival time if it's after 17:00
+                if arrival_time > end_time:
+                    arrival_time = end_time
 
-                    # Format the phrase
-                    record.phrase_du_retard = (
-                        f"Je suis Arrivé en RETARD de {int(hours)} h {int(minutes)} mn " 
-                        f"soit à {1+record.time_darrive.hour:02}h {record.time_darrive.minute:02}mn. "
-                        "J’éviterai à l’avenir cette malencontreuse situation."
-                    )
-                else:
-                    # If arrival time is before 8:00, no phrase for being late
+                # Check if arrival time is before the start time
+                if arrival_time < start_time:
                     record.phrase_du_retard = "Je ne suis pas en retard."
+                    continue
+
+                # Calculate the total working hours (subtract break time if applicable)
+                time_diff = (
+                    datetime.combine(datetime.today(), arrival_time) -
+                    datetime.combine(datetime.today(), start_time)
+                )
+                total_seconds = time_diff.total_seconds()
+
+                # Subtract 1 hour for break time if it overlaps
+                if arrival_time >= break_end:
+                    total_seconds -= 3600
+
+                # Convert time difference to hours and minutes
+                hours, remainder = divmod(total_seconds, 3600)
+                minutes = remainder // 60
+
+                # Format the lateness phrase
+                record.phrase_du_retard = (
+                    f"Je suis Arrivé en RETARD de {int(hours)} h {int(minutes)} mn "
+                    f"soit à {1+record.time_darrive.hour:02}h {record.time_darrive.minute:02}mn. "
+                    "J’éviterai à l’avenir cette malencontreuse situation."
+                )
 
     @api.depends('absence_start_time', 'absence_end_time')
     def _compute_absence_duration(self):
@@ -148,7 +164,7 @@ class DemandeSortie(models.Model):
                 duration = adjusted_end_time - adjusted_start_time
 
                 # Subtract the lunch break time (12:00 to 1:00)
-                if adjusted_start_time.hour < 12 and adjusted_end_time.hour > 13:
+                if adjusted_start_time.hour <= 12 and adjusted_end_time.hour >= 13:
                     break_time = timedelta(hours=1)
                     duration -= break_time
 
@@ -173,8 +189,27 @@ class DemandeSortie(models.Model):
                 adjusted_start_time = record.sortie_start_time + timedelta(hours=1)
                 adjusted_end_time = record.sortie_end_time + timedelta(hours=1)
 
-                # Calculate the duration between adjusted start and end times
+                # Define work time limits
+                work_start = datetime.combine(adjusted_start_time.date(), time(8, 0))
+                work_end = datetime.combine(adjusted_start_time.date(), time(17, 0))
+                break_start = datetime.combine(adjusted_start_time.date(), time(12, 0))
+                break_end = datetime.combine(adjusted_start_time.date(), time(13, 0))
+
+                # Ensure times are within work limits
+                if adjusted_start_time < work_start:
+                    adjusted_start_time = work_start
+                if adjusted_end_time > work_end:
+                    adjusted_end_time = work_end
+
+                # Calculate the duration while accounting for the break time
                 duration = adjusted_end_time - adjusted_start_time
+
+                # Subtract break time if the sortie overlaps with the break
+                if adjusted_start_time < break_end and adjusted_end_time > break_start:
+                    break_duration = min(adjusted_end_time, break_end) - max(adjusted_start_time, break_start)
+                    duration -= break_duration
+
+                # Convert duration to hours and minutes
                 total_hours, remainder = divmod(duration.total_seconds(), 3600)
                 total_minutes = remainder // 60
 
@@ -185,6 +220,7 @@ class DemandeSortie(models.Model):
                 )
             else:
                 record.phrase_du_sortie = ""
+
 
     @api.depends('date_from', 'date_to')
     def _compute_duration(self):
