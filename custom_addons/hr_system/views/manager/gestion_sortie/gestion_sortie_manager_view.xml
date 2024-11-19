@@ -9,11 +9,14 @@
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px"> 
-                                <span style="font-weight: bold;"><field name="duration" /> heures</span>
+                                <span style="font-weight: bold;"><field name="type_demande" /></span>
+                                <span style="font-weight: bold;"> <field name="employee_id" /> </span>
                             </div>
-                            <div>
-                                <p>Demandé par : <field style="font-weight: bold;" name="employee_id"/> </p>
 
+                            <div class="phrases">
+                                <field name="phrase_du_retard" invisible="type_demande not in ('retard')" />
+                                <field name="phrase_du_absence" invisible="type_demande not in ('absence')"/>
+                                <field name="phrase_du_sortie" invisible="type_demande not in ('sortie')"/>
                             </div>
                             <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
                                 <field name="state" widget="badge" decoration-danger="state == 'manager_reject'" decoration-success="state == 'manager_approval'" decoration-muted="state == 'pending'" />
@@ -75,21 +78,35 @@
             <form>
                 <!-- Add your form view structure here -->
                 <header>
-                    <field name="state" widget="statusbar" readonly="1"/>
+                    <field name="state" widget="statusbar" readonly="1" statusbar_visible="pending"/>
                     <button name="approved_by_manager" type="object" string="Accepter" class="accept_button" invisible="state not in ('manager_reject', 'pending')"/>
                     <button name="refused_by_manager" type="object" string="Refuser" class="reject_button" invisible="state not in ('manager_approval', 'pending')"/>
                 </header>
                 <sheet>
                     <group>
                         <group>
-                            <field name="employee_id" />
-                            <field name="date_from" />
-                            <field name="date_to" />
-                            <field name="duration" readonly="1" />
-                            <field name="Motif_de_notification" />
-                            <field name="reason" widget="text" readonly="1"  />
-                            <field name="type_deduction" />
+                            <field name="employee_id" readonly="1" />
+                            <field name="Motif_de_notification" widget="radio" />
+                            <field name="mission_id" invisible="Motif_de_notification not in ('mission')" />
+                            <field name="mission_description" invisible="Motif_de_notification not in ('mission')" />
+                            <field name="type_demande" />
+                            <field name="reason" widget="text"  />
+                            <field name="type_deduction" invisible="Motif_de_notification in ('mission')" />
                             <field name="message_refused_by_hr" invisible="state not in ('refused')" />
+                        </group>
+                        <group>
+                            <!-- Retard -->
+                            <field name="time_darrive" invisible="type_demande not in ('retard')" />
+                            <field name="phrase_du_retard" invisible="type_demande not in ('retard')" />
+                            
+                            <!-- Absence -->
+                            <field name="absence_start_time" invisible="type_demande not in ('absence')"/>
+                            <field name="absence_end_time" invisible="type_demande not in ('absence')"/>
+                            <field name="phrase_du_absence" invisible="type_demande not in ('absence')"/>
+                            <!-- Sortie -->
+                            <field name="sortie_start_time" invisible="type_demande not in ('sortie')"/>
+                            <field name="sortie_end_time" invisible="type_demande not in ('sortie')"/>
+                            <field name="phrase_du_sortie" invisible="type_demande not in ('sortie')"/>
                         </group>
                     </group>
                 </sheet>
@@ -107,7 +124,8 @@
             (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_demande_sortie_calendar_manager')}),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('view_demande_sortie_tree_manager')}), 
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_demande_sortie_form_manager')})]"/>
-        <field name="domain">[('state', 'in', ['pending', 'manager_approval', 'manager_reject'])]</field>
+        <field name="domain">[('state', 'in', ['pending', 'manager_approval', 'manager_reject']), ('employee_id.parent_id.user_id', '=', uid)]</field>
+
         <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_manager')])]"/>
     </record>
 

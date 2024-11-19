@@ -1323,11 +1323,6 @@ Attempting to double-book your time off won't magically make your vacation 2x be
 
     def action_validate(self):
 
-        if not self.env.user.has_group('hr_holidays.group_hr_holidays_manager'):
-            raise UserError(_('You do not have the necessary permissions to validate time-off requests.'))
-
-
-
         current_employee = self.env.user.employee_id
         leaves = self._get_leaves_on_public_holiday()
         if leaves:
@@ -1780,3 +1775,18 @@ Attempting to double-book your time off won't magically make your vacation 2x be
             if exceeding_duration <= excess_limit:
                 continue
             leave._force_cancel(reason, 'mail.mt_note')
+    @api.model
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
+
+        if self.env.user.has_group('hr_holidays.group_hr_holidays_user'):
+            # Extend the domain to filter by states using 'in'
+            domain += [('state', 'in', ['validate1', 'validate'])]
+        
+        if self.env.user.has_group('hr_holidays.group_hr_holidays_manager'):
+            # Extend the domain to filter by states using 'in'
+            domain += [('state', 'in', ['validate1', 'validate'])]
+        
+        
+        # Call the super method with the modified domain
+        res = super(HolidaysRequest, self)._search(domain, offset, limit, order, access_rights_uid)
+        return res
