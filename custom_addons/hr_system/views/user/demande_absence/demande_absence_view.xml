@@ -1,0 +1,118 @@
+<odoo>
+    <record id="view_demande_absence_kanban_user" model="ir.ui.view">
+        <field name="name">demande.absence.kanban.user</field>
+        <field name="model">demande.absence</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <!-- Add your kanban view structure here -->
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px">
+                                <span style="font-weight: bold;"> <field name="employee_id" /> </span>
+                            </div>
+
+                            <div class="phrases">
+                                <field name="phrase_du_absence"/>
+                            </div>
+                            <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
+                                <field name="state" widget="badge" decoration-danger="state == 'refused' or state == 'manager_reject'" decoration-success="state == 'done'" decoration-muted="state == 'pending'" decoration-info="state == 'manager_approval'" />
+
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_demande_absence_calendar_user" model="ir.ui.view">
+        <field name="name">demande.absence.calendar.user</field>
+        <field name="model">demande.absence</field>
+        <field name="arch" type="xml">
+            <calendar string="Demande de Sortie" date_start="absence_start_time" date_stop="absence_end_time" color="state" mode="week" quick_create="0">
+                <field name="employee_id"/>
+                <field name="phrase_du_absence" />
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_demande_absence_search_user" model="ir.ui.view">
+        <field name="name">demande.absence</field>
+        <field name="model">demande.absence</field>
+        <field name="arch" type="xml">
+            <search>
+                    <filter name="filter_pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                    <filter name="group_by_state" string="State" context="{'group_by' : 'state'}" />
+                    <searchpanel>
+                        <field name="state" icon="fa-filter" enable_counters="1"/>
+                    </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_demande_absence_tree_user" model="ir.ui.view">
+        <field name="name">demande.absence.tree.user</field>
+        <field name="model">demande.absence</field>
+        <field name="arch" type="xml">
+            <tree>
+                <!-- Add your tree view structure here -->
+                <field name="employee_id" />
+                <field name="phrase_du_absence" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_demande_absence_form_user" model="ir.ui.view">
+        <field name="name">demande.absence.form.user</field>
+        <field name="model">demande.absence</field>
+        <field name="arch" type="xml">
+            <form>
+                <!-- Add your form view structure here -->
+                <header>
+                    <field name="state" widget="statusbar" readonly="1" statusbar_visible="pending,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id" />
+                            <field name="Motif_de_notification" widget="radio" />
+                            <field name="mission_id" invisible="Motif_de_notification not in ('mission')" />
+                            <field name="reason" widget="text"  />
+                            <field name="type_deduction" invisible="Motif_de_notification in ('mission')" />
+                            <field name="message_refused_by_manager" invisible="state not in ('manager_reject')" readonly="1"/>
+                            <field name="message_refused_by_hr" invisible="state not in ('refused')" readonly="1"/>
+
+                        </group>
+                        <group>
+                            <!-- absence -->
+                            <field name="absence_start_time" />
+                            <field name="absence_end_time" />
+                        </group>
+                    </group>
+                </sheet>
+                
+            </form>
+        </field>
+    </record>
+
+    <record id="view_demande_absence_action_user" model="ir.actions.act_window">
+        <field name="name">Demande absence</field>
+        <field name="res_model">demande.absence</field>
+        <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="domain">[('create_uid', '=', uid)]</field>
+        <field name="view_ids" eval="[(5, 0, 0), 
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_demande_absence_kanban_user')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_demande_absence_calendar_user')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_demande_absence_tree_user')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_demande_absence_form_user')})]"/>
+        <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_user')])]"/>
+    </record>
+
+    <menuitem id="menu_demande_absence_user"
+        name="Demande de absence (user)"
+        parent="demande_absence_root"
+        action="view_demande_absence_action_user"
+        groups="hr_system.group_demande_sortie_user"
+        sequence="30"/>
+</odoo>

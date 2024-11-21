@@ -100,6 +100,7 @@
         <field name="name">Ordres de Mission</field>
         <field name="res_model">ordre.mission</field>
         <field name="view_mode">kanban,calendar,form,tree</field>
+        <field name="domain">[('create_uid', '=', uid)]</field>
         <field name="view_ids" eval="[(5, 0, 0), 
             (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_ordre_mission_kanban_user')}),
             (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_ordre_mission_calendar_user')}),

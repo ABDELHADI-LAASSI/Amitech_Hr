@@ -104,6 +104,13 @@ class AvanceSalaire(models.Model):
 
     @api.model
     def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
+
+
+        # ====================
+        # add user domain to see only he's demande
+        # ====================
+
+        
         # Vérifiez si l'utilisateur appartient au groupe Manager
         if self.env.user.has_group('hr_system.group_demande_sortie_manager'):
             domain += [('state', 'in', ['pending', 'manager_approval', 'manager_reject'])]
