@@ -7,3 +7,5 @@ from . import FraisDeplacement
 from . import DemandeAvanceSalaire
 from . import DemandeDocumentTravail
 from . import HrLeave
+from . import DemandeRetard
+from . import DemandeAbsence

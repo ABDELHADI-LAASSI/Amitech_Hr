@@ -1,7 +1,7 @@
 <odoo>
-    <record id="view_demande_sortie_kanban_manager" model="ir.ui.view">
-        <field name="name">demande.sortie.kanban.manager</field>
-        <field name="model">demande.sortie</field>
+    <record id="view_demande_retard_kanban_manager" model="ir.ui.view">
+        <field name="name">demande.retard.kanban.manager</field>
+        <field name="model">demande.retard</field>
         <field name="arch" type="xml">
             <kanban>
                 <!-- Add your kanban view structure here -->
@@ -13,7 +13,7 @@
                             </div>
 
                             <div class="phrases">
-                                <field name="phrase_du_sortie"/>
+                                <field name="phrase_du_retard"/>
                             </div>
                             <div class="buttons" style="margin-top: 10px; display: flex; justify-content: space-between">
                                 <field name="state" widget="badge" decoration-danger="state == 'manager_reject'" decoration-success="state == 'manager_approval'" decoration-muted="state == 'pending'" />
@@ -46,55 +46,55 @@
         </field>
     </record>
 
-    <record id="view_demande_sortie_calendar_manager" model="ir.ui.view">
-        <field name="name">demande.sortie.calendar.manager</field>
-        <field name="model">demande.sortie</field>
+    <record id="view_demande_retard_calendar_manager" model="ir.ui.view">
+        <field name="name">demande.retard.calendar.manager</field>
+        <field name="model">demande.retard</field>
         <field name="arch" type="xml">
-            <calendar string="Demande de Sortie" date_start="sortie_start_time" date_stop="sortie_end_time" color="state" mode="week" quick_create="0">
+            <calendar string="Demande de Sortie" date_start="time_darrive" date_stop="time_darrive" color="state" mode="week" quick_create="0">
                 <field name="employee_id"/>
-                <field name="phrase_du_sortie"/>
+                <field name="phrase_du_retard" />
             </calendar>
         </field>
     </record>
 
-    <record id="view_demande_sortie_tree_manager" model="ir.ui.view">
-        <field name="name">demande.sortie.tree.manager</field>
-        <field name="model">demande.sortie</field>
+    <record id="view_demande_retard_tree_manager" model="ir.ui.view">
+        <field name="name">demande.retard.tree.manager</field>
+        <field name="model">demande.retard</field>
         <field name="arch" type="xml">
             <tree>
                 <!-- Add your tree view structure here -->
                 <field name="employee_id" />
-                <field name="phrase_du_sortie"/>
+                <field name="phrase_du_retard" />
             </tree>
         </field>
     </record>
 
-    <record id="view_demande_sortie_form_manager" model="ir.ui.view">
-        <field name="name">demande.sortie.form.manager</field>
-        <field name="model">demande.sortie</field>
+    <record id="view_demande_retard_form_manager" model="ir.ui.view">
+        <field name="name">demande.retard.form.manager</field>
+        <field name="model">demande.retard</field>
         <field name="arch" type="xml">
             <form>
                 <!-- Add your form view structure here -->
                 <header>
                     <field name="state" widget="statusbar" readonly="1" statusbar_visible="pending,done"/>
-                    <button name="approved_by_manager" type="object" string="Accepter" class="accept_button" invisible="state not in ('manager_reject', 'pending')"/>
-                    <button name="refused_by_manager" type="object" string="Refuser" class="reject_button" invisible="state not in ('manager_approval', 'pending')"/>
+                    <button name="approved_by_manager" type="object" string="Accepter" class="accept_button" invisible="state not in ('pending', 'manager_reject')"/>
+                    <button name="refused_by_manager" type="object" string="Refuser" class="reject_button" invisible="state not in ('pending', 'manager_approval')"/>
                 </header>
                 <sheet>
                     <group>
                         <group>
-                            <field name="employee_id" readonly="1" />
+                            <field name="employee_id" />
                             <field name="Motif_de_notification" widget="radio" />
                             <field name="mission_id" invisible="Motif_de_notification not in ('mission')" />
+                            <field name="mission_description" invisible="Motif_de_notification not in ('mission')" />
                             <field name="reason" widget="text"  />
                             <field name="type_deduction" invisible="Motif_de_notification in ('mission')" />
                             <field name="message_refused_by_manager" invisible="state not in ('manager_reject')" />
                         </group>
                         <group>
-                            <!-- Sortie -->
-                            <field name="sortie_start_time" />
-                            <field name="sortie_end_time" />
-                            <field name="phrase_du_sortie" />
+                            <!-- Retard -->
+                            <field name="time_darrive" />
+                            <field name="phrase_du_retard" />
                         </group>
                     </group>
                 </sheet>
@@ -103,24 +103,23 @@
         </field>
     </record>
 
-    <record id="view_demande_sortie_action_manager" model="ir.actions.act_window">
-        <field name="name">Demande Sortie</field>
-        <field name="res_model">demande.sortie</field>
+    <record id="view_demande_retard_action_manager" model="ir.actions.act_window">
+        <field name="name">Demande Retard</field>
+        <field name="res_model">demande.retard</field>
         <field name="view_mode">kanban,calendar,form,tree</field>
         <field name="view_ids" eval="[(5, 0, 0), 
-            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_demande_sortie_kanban_manager')}),
-            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_demande_sortie_calendar_manager')}),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_demande_sortie_tree_manager')}), 
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_demande_sortie_form_manager')})]"/>
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_demande_retard_kanban_manager')}),
+            (0, 0, {'view_mode': 'calendar', 'view_id': ref('view_demande_retard_calendar_manager')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_demande_retard_tree_manager')}), 
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_demande_retard_form_manager')})]"/>
         <field name="domain">[('state', 'in', ['pending', 'manager_approval', 'manager_reject']), ('employee_id.parent_id.user_id', '=', uid)]</field>
-
         <field name="groups_id" eval="[(6, 0, [ref('hr_system.group_demande_sortie_manager')])]"/>
     </record>
 
-    <menuitem id="menu_demande_sortie_manager"
-        name="Demande de Sortie (Manager)"
-        parent="demande_sortie_root"
-        action="view_demande_sortie_action_manager"
+    <menuitem id="menu_demande_retard_manager"
+        name="Demande de Retard (manager)"
+        parent="demande_retard_root"
+        action="view_demande_retard_action_manager"
         groups="hr_system.group_demande_sortie_manager"
         sequence="30"/>
 </odoo>

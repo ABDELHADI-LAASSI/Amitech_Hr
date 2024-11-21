@@ -43,6 +43,12 @@ class DemandeDocumentTravail(models.Model):
 
     @api.model
     def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
+
+        # ====================
+        # add user domain to see only he's demande
+        # ====================
+
+        
         # Vérifiez si l'utilisateur appartient au groupe Hr
         
         if self.env.user.has_group('hr_system.group_demande_sortie_hr'):

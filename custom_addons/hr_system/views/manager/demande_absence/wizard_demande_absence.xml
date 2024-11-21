@@ -1,0 +1,18 @@
+<odoo>
+    <record id="view_demande_absence_reject_manager" model="ir.ui.view">
+        <field name="name">demande.absence.wizard.manager</field>
+        <field name="model">demande.absence.wizard.manager</field>
+        <field name="arch" type="xml">
+            <form string="Reject la Demande de Sortie">
+                <group>
+                    <field name="message_refused_by_manager"/>
+                </group>
+                <footer>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    <button string="Reject" type="object" name="action_reject_manager" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

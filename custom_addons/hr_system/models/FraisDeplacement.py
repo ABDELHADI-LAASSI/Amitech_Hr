@@ -102,6 +102,11 @@ class FraisDeplacement(models.Model):
 
     @api.model
     def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
+
+        # ====================
+        # add user domain to see only he's demande
+        # ====================
+        
         # Check if the user is in the Manager group
         if self.env.user.has_group('hr_system.group_demande_sortie_manager'):
             # Extend the domain to filter by states using 'in'
@@ -122,7 +127,7 @@ class FraisDeplacement(models.Model):
         # Call the super method with the modified domain
         res = super(FraisDeplacement, self)._search(domain, offset, limit, order, access_rights_uid)
         return res
-
+    
 
 
 class TypeFrais(models.Model):

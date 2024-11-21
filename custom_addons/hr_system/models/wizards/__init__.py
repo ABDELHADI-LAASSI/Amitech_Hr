@@ -7,3 +7,5 @@ from . import RejectNoteFrais
 from . import fraisDeplacement
 from . import AvanceSalaire
 from . import DemandeDocument
+from . import DemandeRetard
+from . import DemandeAbsence

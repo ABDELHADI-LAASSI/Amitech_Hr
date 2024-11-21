@@ -8,6 +8,10 @@
 
     <menuitem id="demande_sortie_root" name="Demande de Sortie" parent="hr_system_root" />
 
+    <menuitem id="demande_retard_root" name="Demande de Retard" parent="hr_system_root" />
+
+    <menuitem id="demande_absence_root" name="Demande d'Absence" parent="hr_system_root" />
+
     <menuitem id="declaration_retard_root" name="Declaration de Retard" parent="hr_system_root" />
 
     <menuitem id="demande_hours_supp_root" name="Demande d'heures supplémentaires" parent="hr_system_root" />

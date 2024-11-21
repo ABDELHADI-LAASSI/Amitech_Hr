@@ -17,6 +17,8 @@
         'views/user/demande_hours_supp/demande_hours_supp_user_view.xml',
         'views/user/note_frais/note_frais_user_view.xml',
         'views/user/order_mission/order_mission_user_view.xml',
+        'views/user/demande_retard/demande_retard_view.xml',
+        'views/user/demande_absence/demande_absence_view.xml',
         # manager
         'views/manager/gestion_sortie/gestion_sortie_manager_view.xml',
         'views/manager/gestion_sortie/wizard_reject_sortie_view.xml',
@@ -27,12 +29,17 @@
         'views/manager/order_mission/order_mission_manager_view.xml',
         'views/wizards/frais_deplacement/manager_wizard.xml',
         'views/wizards/avance_salaire/manager_wizard.xml',
+        'views/manager/demande_retard/demande_retard_view.xml',
+        'views/manager/demande_absence/demande_absence_view.xml',
+        'views/manager/demande_retard/wizard_demande_retard.xml',
+        'views/manager/demande_absence/wizard_demande_absence.xml',
         #manager chef
         'views/wizards/frais_deplacement/manager_chef_wizard.xml',
         'views/wizards/avance_salaire/manager_chef_wizard.xml',
         # hr
         'views/hr/gestion_sortie/gestion_sortie_hr_view.xml',
         'views/hr/gestion_sortie/wizard_reject_sortie_view.xml',
+        'views/hr/demande_absence/demande_absence_view.xml',
         'views/hr/demande_hours_supp/demande_hours_supp_hr_view.xml',
         'views/hr/demande_hours_supp/wizard_reject_hours_sup.xml',
         'views/hr/note_frais/note_frais_hr_view.xml',
@@ -41,6 +48,9 @@
         'views/wizards/frais_deplacement/hr_wizard.xml',
         'views/wizards/avance_salaire/hr_wizard.xml',
         'views/wizards/document_Travail/hr_wizard.xml',
+        'views/hr/demande_retard/demande_retard_view.xml',
+        'views/hr/demande_retard/wizard_demande_retard.xml',
+        'views/hr/demande_absence/wizard_demande_absence.xml',
         # hr configuration
         'views/hr/configuration/type_heures_supp.xml',
         'views/hr/configuration/type_frais_view.xml',
