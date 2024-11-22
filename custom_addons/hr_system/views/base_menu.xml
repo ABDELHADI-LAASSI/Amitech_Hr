@@ -6,11 +6,11 @@
 
     <menuitem id="conge" name="Demande de Congé" parent="hr_system_root"/>
 
-    <menuitem id="demande_sortie_root" name="Demande de Sortie" parent="hr_system_root" />
+    <menuitem id="demande_sortie_root" name="Demande de Sortie" parent="hr_system_root" sequence="1" />
 
-    <menuitem id="demande_retard_root" name="Demande de Retard" parent="hr_system_root" />
+    <menuitem id="demande_retard_root" name="Demande de Retard" parent="hr_system_root" sequence="2" />
 
-    <menuitem id="demande_absence_root" name="Demande d'Absence" parent="hr_system_root" />
+    <menuitem id="demande_absence_root" name="Demande d'Absence" parent="hr_system_root" sequence="3" />
 
     <menuitem id="declaration_retard_root" name="Declaration de Retard" parent="hr_system_root" />
 

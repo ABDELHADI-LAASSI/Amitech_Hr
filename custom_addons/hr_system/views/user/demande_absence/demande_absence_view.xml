@@ -74,7 +74,7 @@
                 </header>
                 <sheet>
                     <group>
-                        <group>
+                        <group string="Détails de la Notification">
                             <field name="employee_id" />
                             <field name="Motif_de_notification" widget="radio" />
                             <field name="mission_id" invisible="Motif_de_notification not in ('mission')" />
@@ -84,7 +84,7 @@
                             <field name="message_refused_by_hr" invisible="state not in ('refused')" readonly="1"/>
 
                         </group>
-                        <group>
+                        <group string="Détails de l'Absence">
                             <!-- absence -->
                             <field name="absence_start_time" />
                             <field name="absence_end_time" />
