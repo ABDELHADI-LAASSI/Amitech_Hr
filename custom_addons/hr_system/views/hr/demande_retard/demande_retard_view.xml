@@ -82,7 +82,7 @@
                 </header>
                 <sheet>
                     <group>
-                        <group>
+                        <group string="Détails de la Notification">
                             <field name="employee_id" />
                             <field name="Motif_de_notification" widget="radio" />
                             <field name="mission_id" invisible="Motif_de_notification not in ('mission')" />
@@ -91,7 +91,7 @@
                             <field name="type_deduction" invisible="Motif_de_notification in ('mission')" />
                             <field name="message_refused_by_hr" invisible="state not in ('refused')" />
                         </group>
-                        <group>
+                        <group string="Détails du Retard">
                             <!-- Retard -->
                             <field name="time_darrive" />
                             <field name="phrase_du_retard" />

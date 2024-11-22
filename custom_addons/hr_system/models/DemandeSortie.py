@@ -1,5 +1,8 @@
 from odoo import models, fields, api
 from datetime import datetime, time, timedelta
+from odoo.exceptions import UserError
+import logging
+_logger = logging.getLogger(__name__)
 
 class DemandeSortie(models.Model):
     _name = 'demande.sortie'
@@ -63,38 +66,81 @@ class DemandeSortie(models.Model):
                 adjusted_start_time = record.sortie_start_time + timedelta(hours=1)
                 adjusted_end_time = record.sortie_end_time + timedelta(hours=1)
 
-                # Define work time limits
-                work_start = datetime.combine(adjusted_start_time.date(), time(8, 0))
-                work_end = datetime.combine(adjusted_start_time.date(), time(17, 0))
-                break_start = datetime.combine(adjusted_start_time.date(), time(12, 0))
-                break_end = datetime.combine(adjusted_start_time.date(), time(13, 0))
+                if adjusted_start_time > adjusted_end_time:
+                    raise ValidationError("L'heure de debut de l'absence doit etre avant l'heure de fin de l'absence")
 
-                # Ensure times are within work limits
-                if adjusted_start_time < work_start:
-                    adjusted_start_time = work_start
-                if adjusted_end_time > work_end:
-                    adjusted_end_time = work_end
-
-                # Calculate the duration while accounting for the break time
-                duration = adjusted_end_time - adjusted_start_time
-
-                # Subtract break time if the sortie overlaps with the break
-                if adjusted_start_time < break_end and adjusted_end_time > break_start:
-                    break_duration = min(adjusted_end_time, break_end) - max(adjusted_start_time, break_start)
-                    duration -= break_duration
-
-                # Convert duration to hours and minutes
-                total_hours, remainder = divmod(duration.total_seconds(), 3600)
-                total_minutes = remainder // 60
-
-                # Format the phrase
-                record.phrase_du_sortie = (
-                    f"Obligé de sortir le {adjusted_start_time.strftime('%d/%m/%Y')} à "
-                    f"{adjusted_start_time.strftime('%H:%M')} h soit {int(total_hours)} h {int(total_minutes)} mn."
+                # Get the work schedule (assuming calendar is linked to the employee/resource)
+                work_schedule = self.env['resource.calendar'].search(
+                    [('name', '=', 'Standard 40 hours/week')], limit=1
                 )
+
+                print(f"Adjusted Start Time: {adjusted_start_time}, Adjusted End Time: {adjusted_end_time}")
+
+                if work_schedule:
+                    # Get the weekday as a string ('0' for Monday, '6' for Sunday)
+                    weekday = str(adjusted_start_time.weekday())
+
+                    # Find the attendance rules for this day
+                    day_schedule = work_schedule.attendance_ids.filtered(lambda att: att.dayofweek == weekday)
+
+                    print(f"Day Schedule: {day_schedule}")
+
+                    if day_schedule:
+                        # Extract the working hours for the day
+                        work_start = datetime.combine(
+                            adjusted_start_time.date(),
+                            time(int(day_schedule[0].hour_from), int((day_schedule[0].hour_from % 1) * 60))
+                        )
+                        work_end = datetime.combine(
+                            adjusted_start_time.date(),
+                            time(int(day_schedule[2].hour_to), int((day_schedule[2].hour_to % 1) * 60))
+                        )
+
+                        print(f"Work Start: {work_start}, Work End: {work_end}")
+
+                        # Break times (hardcoded for now, replace with actual break times if defined)
+                        break_start = datetime.combine(
+                            adjusted_start_time.date(),
+                            time(int(day_schedule[1].hour_from), int((day_schedule[1].hour_from % 1) * 60))
+                        )
+                        break_end = datetime.combine(
+                            adjusted_start_time.date(),
+                            time(int(day_schedule[1].hour_to), int((day_schedule[1].hour_to % 1) * 60))
+                        )
+
+                        # Ensure the times are within work limits
+                        if adjusted_start_time < work_start:
+                            adjusted_start_time = work_start
+                        if adjusted_end_time > work_end:
+                            adjusted_end_time = work_end
+
+                        print(f"Adjusted Start: {adjusted_start_time}, Adjusted End: {adjusted_end_time}")
+
+                        # Calculate the duration
+                        duration = adjusted_end_time - adjusted_start_time
+                        print(f"Initial Duration: {duration}")
+
+                        # Subtract break time if the sortie overlaps with the break
+                        if adjusted_start_time < break_end and adjusted_end_time > break_start:
+                            break_duration = min(adjusted_end_time, break_end) - max(adjusted_start_time, break_start)
+                            duration -= break_duration
+                            print(f"Break Duration: {break_duration}, Final Duration: {duration}")
+
+                        # Convert duration to hours and minutes
+                        total_hours, remainder = divmod(duration.total_seconds(), 3600)
+                        total_minutes = remainder // 60
+
+                        # Format the phrase
+                        record.phrase_du_sortie = (
+                            f"Obligé de sortir le {adjusted_start_time.strftime('%d/%m/%Y')} à "
+                            f"{adjusted_start_time.strftime('%H:%M')} h soit {int(total_hours)} h {int(total_minutes)} mn."
+                        )
+                    else:
+                        raise UserError("Pas d'horaire prévu pour ce jour.")  # This will show a popup message
+                else:
+                    record.phrase_du_sortie = "Work calendar not found."
             else:
                 record.phrase_du_sortie = ""
-
 
 
     @api.depends('sortie_start_time', 'sortie_end_time')
@@ -126,6 +172,18 @@ class DemandeSortie(models.Model):
             else:
                 # If start or end time is not set, set duration to 0
                 record.sortie_duration_minutes = 0.0
+
+
+    @api.model
+    def _get_employee_for_current_user(self):
+        # Get the current user
+        user = self.env.user
+        
+        # Check if the user has an associated employee record
+        employee = self.env['hr.employee'].search([('user_id', '=', user.id)], limit=1)
+        
+        # If the user has an associated employee, return it, otherwise return False (or None)
+        return employee.id if employee else False
 
     def refused_by_manager(self):
         return {

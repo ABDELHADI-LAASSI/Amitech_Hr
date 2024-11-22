@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from datetime import datetime, time, timedelta
+from odoo.exceptions import UserError
 
 class DemandeRetard(models.Model):
     _name = 'demande.retard'
@@ -66,51 +67,80 @@ class DemandeRetard(models.Model):
         # If the user has an associated employee, return it, otherwise return False (or None)
         return employee.id if employee else False
 
-
     @api.depends('time_darrive')
     def _compute_phrase_du_retard(self):
         for record in self:
             if record.time_darrive:
-               # Extract the arrival time and add one hour
-                arrival_time = (datetime.combine(datetime.today(), record.time_darrive.time()) + timedelta(hours=1)).time()
+                # Add one hour to the recorded arrival time
+                adjusted_arrival_time = record.time_darrive + timedelta(hours=1)
 
-
-                # Define reference times
-                start_time = time(8, 0)
-                end_time = time(17, 0)
-                break_start = time(12, 0)
-                break_end = time(13, 0)
-
-                # Adjust the arrival time if it's after 17:00
-                if arrival_time > end_time:
-                    arrival_time = end_time
-
-                # Check if arrival time is before the start time
-                if arrival_time < start_time:
-                    record.phrase_du_retard = "Je ne suis pas en retard."
-                    continue
-
-                # Calculate the total working hours (subtract break time if applicable)
-                time_diff = (
-                    datetime.combine(datetime.today(), arrival_time) -
-                    datetime.combine(datetime.today(), start_time)
+                # Get the work schedule (assuming calendar is linked to the employee/resource)
+                work_schedule = self.env['resource.calendar'].search(
+                    [('name', '=', 'Standard 40 hours/week')], limit=1
                 )
-                total_seconds = time_diff.total_seconds()
 
-                # Subtract 1 hour for break time if it overlaps
-                if arrival_time >= break_end:
-                    total_seconds -= 3600
+                if work_schedule:
+                    # Get the weekday as a string ('0' for Monday, '6' for Sunday)
+                    weekday = str(adjusted_arrival_time.weekday())
 
-                # Convert time difference to hours and minutes
-                hours, remainder = divmod(total_seconds, 3600)
-                minutes = remainder // 60
+                    # Find the attendance rules for this day
+                    day_schedule = work_schedule.attendance_ids.filtered(lambda att: att.dayofweek == weekday)
 
-                # Format the lateness phrase
-                record.phrase_du_retard = (
-                    f"Je suis Arrivé en RETARD de {int(hours)} h {int(minutes)} mn "
-                    f"soit à {1+record.time_darrive.hour:02}h {record.time_darrive.minute:02}mn. "
-                    "J’éviterai à l’avenir cette malencontreuse situation."
-                )
+                    if day_schedule:
+                        # Extract the working hours for the day
+                        work_start = datetime.combine(
+                            adjusted_arrival_time.date(),
+                            time(int(day_schedule[0].hour_from), int((day_schedule[0].hour_from % 1) * 60))
+                        )
+                        work_end = datetime.combine(
+                            adjusted_arrival_time.date(),
+                            time(int(day_schedule[2].hour_to), int((day_schedule[2].hour_to % 1) * 60))
+                        )
+
+                        # Break times (hardcoded for now, replace with actual break times if defined)
+                        break_start = datetime.combine(
+                            adjusted_arrival_time.date(),
+                            time(int(day_schedule[1].hour_from), int((day_schedule[1].hour_from % 1) * 60))
+                        )
+                        break_end = datetime.combine(
+                            adjusted_arrival_time.date(),
+                            time(int(day_schedule[1].hour_to), int((day_schedule[1].hour_to % 1) * 60))
+                        )
+
+                        # Ensure the arrival time is within work limits
+                        if adjusted_arrival_time.time() > work_end.time():
+                            adjusted_arrival_time = work_end
+                        if adjusted_arrival_time.time() < work_start.time():
+                            record.phrase_du_retard = "Je ne suis pas en retard."
+                            continue
+
+                        # Calculate lateness duration
+                        lateness_duration = adjusted_arrival_time - work_start
+
+                        # Subtract break time if the arrival overlaps with the break
+                        if adjusted_arrival_time > break_start and adjusted_arrival_time < break_end:
+                            lateness_duration -= break_end - break_start
+
+                        # Convert lateness duration to hours and minutes
+                        total_seconds = lateness_duration.total_seconds()
+                        hours, remainder = divmod(total_seconds, 3600)
+                        minutes = remainder // 60
+
+                        # Format the lateness phrase
+                        record.phrase_du_retard = (
+                            f"Je suis arrivé en RETARD de {int(hours)} h {int(minutes)} mn, "
+                            f"soit à {adjusted_arrival_time.strftime('%H:%M')} h. "
+                            "J’éviterai à l’avenir cette malencontreuse situation."
+                        )
+                    else:
+                        # No work schedule for this day
+                        raise UserError("Aucun horaire de travail n'est défini pour ce jour.")
+                else:
+                    # No work calendar found
+                    raise UserError("Aucun calendrier de travail associé n'a été trouvé.")
+            else:
+                # No arrival time defined
+                record.phrase_du_retard = "Heure d'arrivée non définie."
 
     def refused_by_manager(self):
         return {

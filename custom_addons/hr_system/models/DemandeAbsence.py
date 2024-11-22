@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from datetime import datetime, time, timedelta
+from odoo.exceptions import ValidationError
 
 class DemandeAbsence(models.Model):
     _name = 'demande.absence'
@@ -74,36 +75,83 @@ class DemandeAbsence(models.Model):
     def _compute_phrase_du_absence(self):
         for record in self:
             if record.absence_start_time and record.absence_end_time:
-                # Adjust times by adding 1 hour
+                # Add one hour to start and end times
                 adjusted_start_time = record.absence_start_time + timedelta(hours=1)
                 adjusted_end_time = record.absence_end_time + timedelta(hours=1)
 
-                # Ensure that the start and end times are within the working hours
-                if adjusted_start_time.hour < 8:
-                    adjusted_start_time = adjusted_start_time.replace(hour=8, minute=0, second=0, microsecond=0)
-                if adjusted_end_time.hour > 17:
-                    adjusted_end_time = adjusted_end_time.replace(hour=17, minute=0, second=0, microsecond=0)
+                if adjusted_start_time > adjusted_end_time:
+                    raise ValidationError("L'heure de debut de l'absence doit etre avant l'heure de fin de l'absence")
 
-                # Calculate the duration between start and end times
-                duration = adjusted_end_time - adjusted_start_time
-
-                # Subtract the lunch break time (12:00 to 1:00)
-                if adjusted_start_time.hour <= 12 and adjusted_end_time.hour >= 13:
-                    break_time = timedelta(hours=1)
-                    duration -= break_time
-
-                total_hours, remainder = divmod(duration.total_seconds(), 3600)
-                total_minutes = remainder // 60
-
-                # Format the phrase
-                record.phrase_du_absence = (
-                    f"Je suis Obligé de m’absenter le {adjusted_start_time.strftime('%d/%m/%Y')} de "
-                    f"{adjusted_start_time.strftime('%H:%M')} à {adjusted_end_time.strftime('%H:%M')} "
-                    f"soit {int(total_hours)} h {int(total_minutes)} mn."
+                # Retrieve the work schedule from the resource calendar
+                work_schedule = self.env['resource.calendar'].search(
+                    [('name', '=', 'Standard 40 hours/week')], limit=1
                 )
+
+                if work_schedule:
+                    # Get the weekday as a string ('0' for Monday, '6' for Sunday)
+                    weekday = str(adjusted_start_time.weekday())
+
+                    # Find the attendance rules for this day
+                    day_schedule = work_schedule.attendance_ids.filtered(lambda att: att.dayofweek == weekday)
+
+                    if day_schedule:
+                        # Extract working hours for the day
+                        work_start = datetime.combine(
+                            adjusted_start_time.date(),
+                            time(int(day_schedule[0].hour_from), int((day_schedule[0].hour_from % 1) * 60))
+                        )
+                        work_end = datetime.combine(
+                            adjusted_start_time.date(),
+                            time(int(day_schedule[-1].hour_to), int((day_schedule[-1].hour_to % 1) * 60))
+                        )
+
+                        # Break times (assumed as defined in the second attendance line for the day)
+                        break_start = datetime.combine(
+                            adjusted_start_time.date(),
+                            time(int(day_schedule[1].hour_from), int((day_schedule[1].hour_from % 1) * 60))
+                        ) if len(day_schedule) > 1 else None
+
+                        break_end = datetime.combine(
+                            adjusted_start_time.date(),
+                            time(int(day_schedule[1].hour_to), int((day_schedule[1].hour_to % 1) * 60))
+                        ) if len(day_schedule) > 1 else None
+
+                        # Adjust start and end times to fit within work limits
+
+                        
+
+                        if adjusted_start_time < work_start or adjusted_start_time > adjusted_end_time:
+                            adjusted_start_time = work_start
+                        if adjusted_end_time > work_end or adjusted_end_time < adjusted_start_time:
+                            adjusted_end_time = work_end
+
+                        # Calculate the absence duration
+                        duration = adjusted_end_time - adjusted_start_time
+
+                        # Subtract break time if the absence overlaps with the break
+                        if break_start and adjusted_start_time < break_end and adjusted_end_time > break_start:
+                            break_duration = min(adjusted_end_time, break_end) - max(adjusted_start_time, break_start)
+                            duration -= break_duration
+
+                        # Convert duration to hours and minutes
+                        total_hours, remainder = divmod(duration.total_seconds(), 3600)
+                        total_minutes = remainder // 60
+
+                        # Format the phrase
+                        record.phrase_du_absence = (
+                            f"Je suis Obligé de m’absenter le {adjusted_start_time.strftime('%d/%m/%Y')} de "
+                            f"{adjusted_start_time.strftime('%H:%M')} à {adjusted_end_time.strftime('%H:%M')} "
+                            f"soit {int(total_hours)} h {int(total_minutes)} mn."
+                        )
+                    else:
+                        # Display a popup message and reset the record
+                        raise ValidationError("Aucun horaire de travail défini pour ce jour dans le calendrier.")
+
+                else:
+                    # Display a popup message and reset the record
+                    raise ValidationError("Calendrier de travail non trouvé.")
             else:
                 record.phrase_du_absence = ""
-
 
     def refused_by_manager(self):
         return {
