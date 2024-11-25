@@ -1,6 +1,6 @@
 from odoo import models, fields, api
 from datetime import datetime, time, timedelta
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError , ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -109,10 +109,10 @@ class DemandeSortie(models.Model):
                         )
 
                         # Ensure the times are within work limits
-                        if adjusted_start_time < work_start:
-                            adjusted_start_time = work_start
-                        if adjusted_end_time > work_end:
-                            adjusted_end_time = work_end
+                        if adjusted_start_time < work_start or adjusted_start_time > adjusted_end_time or adjusted_start_time > work_end:
+                            adjusted_start_time = work_start - timedelta(hours=1)
+                        if adjusted_end_time > work_end or adjusted_end_time < adjusted_start_time or adjusted_end_time < work_start:
+                            adjusted_end_time = work_end - timedelta(hours=1)
 
                         print(f"Adjusted Start: {adjusted_start_time}, Adjusted End: {adjusted_end_time}")
 
