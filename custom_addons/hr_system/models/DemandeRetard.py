@@ -1,6 +1,6 @@
 from odoo import models, fields, api
 from datetime import datetime, time, timedelta
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError , ValidationError
 
 class DemandeRetard(models.Model):
     _name = 'demande.retard'

@@ -116,14 +116,16 @@ class DemandeAbsence(models.Model):
                             time(int(day_schedule[1].hour_to), int((day_schedule[1].hour_to % 1) * 60))
                         ) if len(day_schedule) > 1 else None
 
-                        # Adjust start and end times to fit within work limits
+                        # Adjust start and end times to fit within work limits 
 
                         
 
-                        if adjusted_start_time < work_start or adjusted_start_time > adjusted_end_time:
+                        if adjusted_start_time < work_start or adjusted_start_time > adjusted_end_time or adjusted_start_time > work_end:
                             adjusted_start_time = work_start
-                        if adjusted_end_time > work_end or adjusted_end_time < adjusted_start_time:
+                            record.absence_start_time = adjusted_start_time - timedelta(hours=1)
+                        if adjusted_end_time > work_end or adjusted_end_time < adjusted_start_time or adjusted_end_time < work_start:
                             adjusted_end_time = work_end
+                            record.absence_end_time = adjusted_end_time - timedelta(hours=1)
 
                         # Calculate the absence duration
                         duration = adjusted_end_time - adjusted_start_time
